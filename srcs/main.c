@@ -9,6 +9,9 @@ int main(int argc, char **argv, char **envp)
 	(void)argc;
 	(void)argv;
 	(void)envp;
+
+	t_token *tokens;
+
 	while (1)
 	{
 		line = readline("minishell> ");
@@ -19,7 +22,10 @@ int main(int argc, char **argv, char **envp)
 		}
 		if (*line)
 			add_history(line);
-		printf("You entered: %s\n", line);
+		//printf("You entered: %s\n", line);
+		tokens = lexer(line);
+		print_tokens(tokens);
+		free_tokens(tokens);
 		free(line);
 	}
 	rl_clear_history();

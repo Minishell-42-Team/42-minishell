@@ -3,7 +3,7 @@ CC			= cc
 CFLAGS		= -Wall -Wextra -Werror -Iincludes -Ilibft
 LDFLAGS		= -Llibft -lft -lreadline
 
-SRC_DIR		= srcs
+SRC_DIR		= srcs/
 OBJ_DIR		= objs
 INC_DIR		= includes
 LIBFT_DIR	= libft
