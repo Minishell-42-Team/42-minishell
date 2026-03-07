@@ -27,7 +27,7 @@ int main(int argc, char **argv, char **envp)
 		free_tokens(tokens);
 		free(line);
 	}
-	//rl_clear_history();
-	clear_history();
+	rl_clear_history();
+//	clear_history();
 	return (g_status);
 }

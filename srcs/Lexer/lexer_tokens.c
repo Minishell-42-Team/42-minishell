@@ -134,15 +134,15 @@ t_token	*new_token(t_token_type type, char *value)
 
 void	add_token(t_token **head, t_token *new)
 {
-	t_token	*tmp;
 	if (!*head)
+	{
 		*head = new;
+		(*head)->next = NULL;
+	}
 	else
 	{
-		tmp = *head;
-		while (tmp->next)
-			tmp = tmp->next;
-		tmp->next = new;
+		new->next = *head;
+		*head = new;
 	}
 }
 
