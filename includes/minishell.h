@@ -30,7 +30,6 @@ extern int g_status;
 
 typedef enum e_token_type
 {
-	TOKEN_NONE,
 	WORD,
 	PIPE,
 	REDIR_IN,  

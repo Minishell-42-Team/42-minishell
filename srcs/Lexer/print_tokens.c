@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "minishell.h"
 
 char *token_type_str(t_token_type type)
 {
@@ -36,6 +36,16 @@ void print_tokens(t_token *tokens)
 		printf("TYPE: %s", token_type_str(tokens->type));
 		if (tokens->value)
 			printf(" | VALUE: %s", tokens->value);
+        else if (tokens->type == PIPE)
+            printf(" | VALUE: |");
+        else if (tokens->type == REDIR_OUT)
+            printf(" | VALUE: >");
+        else if (tokens->type == REDIR_IN)
+            printf(" | VALUE: <");
+        else if (tokens->type == APPEND)
+            printf(" | VALUE: >>");
+        else if (tokens->type == HEREDOC)
+            printf(" | VALUE: <<");
 		printf("\n");
 		tokens = tokens->next;
 	}

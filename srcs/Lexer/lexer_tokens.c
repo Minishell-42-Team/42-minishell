@@ -19,9 +19,7 @@
 // Verifie les erreurs (ENCORE A VERIFIER TOTALEMENT!!!)
 // Encore quelques fuites de memoire a gerer
 
-#include "../includes/minishell.h"
-#include "../libft/libft.h"
-
+#include "minishell.h"
 //*************************************************************//
 
 t_token_type	get_operator_type(t_data *data)
@@ -47,7 +45,7 @@ t_token_type	get_operator_type(t_data *data)
 		return (REDIR_IN);
 	if (c == '>')
 		return (REDIR_OUT);
-	return (TOKEN_NONE);
+	return (WORD);
 }
 
 //************************FONCTIONS SPECIALISEES**************************************//
@@ -106,10 +104,8 @@ char	*read_normal_word(t_data *data)
 
 char	*read_word(t_data *data)
 {
-	int	start;
 	char	*word;
 
-	start = data->pos;
 	word = NULL;
 	char c = data->line[data->pos];
 	if (c == '\'' || c == '"')
@@ -157,7 +153,6 @@ t_token	*lexer(char *line)
 	t_data	*data;
 	t_token	*tokens;
 	char	*word;
-	char *op_value; 
 	t_token_type	type;
 	
 	data = malloc(sizeof(t_data));
@@ -174,23 +169,9 @@ t_token	*lexer(char *line)
 		if (!data->line[data->pos]) 
 			break ;
 		type = get_operator_type(data);
-		if (type != TOKEN_NONE)
-		{
-			op_value = NULL;
-
-			if (type == PIPE)
-				op_value = ft_strdup("|");
-			else if (type == APPEND)
-				op_value = ft_strdup(">>");
-			else if (type == HEREDOC)
-				op_value = ft_strdup("<<");
-			else if (type == REDIR_IN)
-				op_value = ft_strdup("<");
-			else if (type == REDIR_OUT)
-				op_value = ft_strdup(">");
-				
-			add_token(&tokens, new_token(type, op_value));
-			free(op_value);
+		if (type != WORD)
+		{		
+			add_token(&tokens, new_token(type, NULL));
 			data->pos++;
 		}
 		else
