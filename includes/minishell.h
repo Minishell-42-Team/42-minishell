@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 15:44:47 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/06 15:59:25 by clwenhaj         ###   ########.fr       */
+/*   Updated: 2026/03/10 11:17:00 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@
 
 #include <string.h>
 #include <ctype.h>
-#include <errno.h>
 
 extern int g_status;
 
@@ -63,5 +62,7 @@ t_token	*lexer(char *line);
 void	free_tokens(t_token *tokens);
 void	print_tokens(t_token *tokens);
 char	*token_type_str(t_token_type type);
+
+char    *expand_variable(const char *str, int *pos);
 
 #endif

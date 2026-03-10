@@ -30,12 +30,12 @@ $(NAME): $(OBJS)
 
 clean:
 	@echo "$(RED)Deleting object files...$(RESET)"
+	@rm -f $(OBJS)
 	@$(MAKE) -C $(LIBFT_DIR) clean
 
 fclean: clean
 	@echo "$(RED)Deleting $(NAME)...$(RESET)"
 	@rm -f $(NAME)
-	@rm -f $(OBJS)
 	@$(MAKE) -C $(LIBFT_DIR) fclean
 
 re: fclean all
