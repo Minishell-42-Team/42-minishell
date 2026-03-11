@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 15:54:24 by clwenhaj          #+#    #+#             */
-/*   Updated: 2026/03/11 20:22:25 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/03/11 20:32:42 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,14 +191,7 @@ t_token	*new_token(t_token_type type, char *value)
 	if (!token)
 		return (NULL);
 	token->type = type;
-<<<<<<< HEAD:srcs/Lexer/lexer_tokens.c
-	if (value)
-		token->value = ft_strdup(value);
-	else
-		token->value = NULL;
-=======
-	token->value = value;
->>>>>>> 67753e5b3fda7f348a51a09fe185d3c234b57f6f:srcs/1_Lexer/lexer_tokens.c
+	token->value = ft_strdup(value);
 	token->next = NULL;
 	return (token);
 }
@@ -245,30 +238,16 @@ t_token	*lexer(char *line)
 	char	*word;
 	t_token	*tok;
 	t_token_type	type;
-<<<<<<< HEAD:srcs/Lexer/lexer_tokens.c
-
-	data = malloc(sizeof(t_data));
-	if (!data)
-		return (NULL);
-	data->line = line;
-=======
 
 	data.line = line;
->>>>>>> 67753e5b3fda7f348a51a09fe185d3c234b57f6f:srcs/1_Lexer/lexer_tokens.c
 	tokens = NULL;
 	data.pos = 0;
 
 	while (data.line[data.pos])
 	{
-<<<<<<< HEAD:srcs/Lexer/lexer_tokens.c
-		while (isspace(data->line[data->pos]))
-			data->pos++;
-		if (!data->line[data->pos])
-=======
 		while (ft_isspace(data.line[data.pos]))
 			data.pos++;
 		if (!data.line[data.pos])
->>>>>>> 67753e5b3fda7f348a51a09fe185d3c234b57f6f:srcs/1_Lexer/lexer_tokens.c
 			break ;
 		type = get_operator_type(&data);
 		if (type != WORD)
