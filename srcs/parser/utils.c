@@ -6,7 +6,7 @@
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/10 06:22:02 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/10 15:25:30 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/03/11 15:26:29 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,12 @@ int is_type_redir(t_token *token)
             || token->type == REDIR_IN || token->type == REDIR_OUT);
 }
 
-void    ft_clear_redir(t_redir_file **head)
+void    affect_token(t_token **token, t_token *token_to_be)
+{
+    *token = token_to_be;
+}
+
+static  void    ft_clear_redir(t_redir_file **head)
 {
     t_redir_file    *current_redir;
     t_redir_file    *redir_to_free;

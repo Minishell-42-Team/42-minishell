@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 15:44:47 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/10 12:37:12 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/03/11 15:50:04 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,8 +67,7 @@ typedef struct	s_data
 } t_data;
 
 
-int    quit_error(char *msg);
-
+int				quit_error(char *msg);
 t_token_type	get_operator_type(t_data *data);
 char			*read_word_between_quotes(t_data *data, char quote);
 char			*read_normal_word(t_data *data);
@@ -82,4 +81,7 @@ char			*token_type_str(t_token_type type);
 t_command_ast	*parser(t_token *tokens);
 void			print_commands(t_command_ast *cmds);
 int				is_type_redir(t_token *token);
+void			affect_token(t_token **token, t_token *token_to_be);
+void			ft_free_command(t_command_ast **command);
+
 #endif

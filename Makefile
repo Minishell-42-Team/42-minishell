@@ -40,4 +40,10 @@ fclean: clean
 
 re: fclean all
 
+debug: CFLAGS += -g3 -fsanitize=address
+debug: re
+
+gdb: CFLAGS += -g3
+gdb: re
+
 .PHONY: all clean fclean re

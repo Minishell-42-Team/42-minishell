@@ -6,27 +6,29 @@
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/10 04:51:52 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/10 15:58:10 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/03/11 19:53:44 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static  t_command_ast init_command()
+static t_command_ast *init_command()
 {
-    (*command) = (t_command_ast *)malloc(sizeof(t_command_ast));
-    if (!(*command))
-        return (0);
-    (*command)->next = NULL;
-    (*command)->command = NULL;
-    (*command)->args = NULL;
-    (*command)->redirs = NULL;
-    return (1);
+    t_command_ast   *command;
+
+    command = (t_command_ast *)malloc(sizeof(t_command_ast));
+    if (!command)
+        return (NULL);
+    command->next = NULL;
+    command->command = NULL;
+    command->args = NULL;
+    command->redirs = NULL;
+    return (command);
 }
 
-static int ft_addredirs(t_redir_file **head, t_token_type type, char *file)
+static int ft_addredir(t_redir_file **head, t_token_type type, char *file)
 {
-    t_redir_file *node;
+    t_redir_file    *node;
 
     node = (t_redir_file *)malloc(sizeof(t_redir_file));
     if (!node)
@@ -34,6 +36,8 @@ static int ft_addredirs(t_redir_file **head, t_token_type type, char *file)
     node->next = NULL;
     node->type = type;
     node->file = ft_strdup(file);
+    if (!node->file)
+        return (free(node), 0);
     if (!*head)
         *head = node;
     else
@@ -44,61 +48,67 @@ static int ft_addredirs(t_redir_file **head, t_token_type type, char *file)
     return (1);
 }
 
-static  int extract_command_param(t_command_ast *commands, t_token *tokens,
-        t_token **token_current)
+int get_command_param(t_command_ast *command, t_token *token,
+        t_token **current_token)
 {
-    if (!tokens)
-        return (0);
-    if (tokens->type == PIPE)
+    t_list  *node;
+
+    node = NULL;
+    if (!token)
+        return (affect_token(current_token, NULL), 1);
+    else if (token->type == PIPE)
+        return (affect_token(current_token, token->next), 1);
+    else if (token->type == WORD && !command->command)
     {
-        *token_current = tokens->next;
-        return (1);
+        command->command = ft_strdup(token->value);
+        if (!command->command)
+            return (0);
     }
-    if (tokens->type == WORD)
-        if (extract_command_param(commands, tokens->next, token_current) != -1)
-            return (ft_lstadd_back(&command->args,
-                    ft_lstnew(ft_strdup(tokens->value))), 1);
-    else if (is_type_redir(tokens))
-        if (extract_command(commands, tokens->next->next, token_current) != -1)
-            return (ft_addredirs(&command->redirs, tokens->type,
-                        tokens->next->value));
-    return (-1);
+    else if (is_type_redir(token) && token->next->type == WORD)
+        return (ft_addredir(&command->redirs, token->type, token->next->value)
+            && get_command_param(command, token->next->next, current_token));
+    else
+    {
+        node = ft_lstnew(ft_strdup(token->value));
+        if (!node)
+            return (0);
+        ft_lstadd_back(&command->args, node);
+    }
+    return (get_command_param(command, token->next, current_token));
 }
 
 static t_command_ast    *get_commands(t_token *tokens)
 {
-    t_token         *token_current;
+    t_token         *current_token;
     t_command_ast   *cmds;
     t_command_ast   *current_cmd;
     t_token         *head;
 
     if (!tokens)
-        return (1);
+        return (NULL);
     cmds = init_command();
     if (!cmds)
         return (NULL);
     current_cmd = cmds;
     head = tokens;
-    while (extract_command(current_cmd, head, &token_current) == 1)
+    current_token = tokens;
+    while (get_command_param(current_cmd, head, &current_token)
+        && current_token)
     {
         current_cmd->next = init_command();
         if (!current_cmd->next)
-            return (ft_free_command(*cmds), NULL);
-        command_current = command_current->next;
-        head = token_current->next;
+            return (ft_free_command(&cmds), NULL);
+        current_cmd = current_cmd->next;
+        head = current_token;
     }
-    if (!token_current)
+    if (!current_token)
         return (cmds);
-    return (ft_free_command(*cmds), NULL);
+    return (ft_free_command(&cmds), NULL);
 }
 
 t_command_ast   *parser(t_token *tokens)
 {
-    t_command_ast   *commands;
-
     if (!tokens)
         return (NULL);
-    if (!get_commands(&commands, tokens))
-        return (NULL);
-    return (commands);
+    return (get_commands(tokens));
 }
