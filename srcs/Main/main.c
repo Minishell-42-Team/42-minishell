@@ -25,6 +25,7 @@ int main(int argc, char **argv, char **envp)
 		tokens = lexer(line);
 		print_tokens(tokens);
 		free_tokens(tokens);
+
 		free(line);
 	}
 	rl_clear_history();
