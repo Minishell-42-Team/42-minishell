@@ -29,6 +29,7 @@ int main(int argc, char **argv, char **envp)
 		print_commands(cmds);
 		ft_free_command(&cmds);
 		free_tokens(tokens);
+
 		free(line);
 	}
 	rl_clear_history();
