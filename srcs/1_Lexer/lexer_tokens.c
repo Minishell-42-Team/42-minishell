@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 15:54:24 by clwenhaj          #+#    #+#             */
-/*   Updated: 2026/03/10 11:22:40 by clwenhaj         ###   ########.fr       */
+/*   Updated: 2026/03/11 20:32:42 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ char	*read_normal_word(t_data *data)
 
 	buf_pos = 0;
 	while (data->line[data->pos]
-		&& !ft_isspace(data->line[data->pos]) 
+		&& !ft_isspace(data->line[data->pos])
 		&& !is_quote(data->line[data->pos])
 		&& !is_operator(data->line[data->pos]))
 	{
@@ -155,11 +155,11 @@ char	*read_word(t_data *data)
 	char	*tmp;
 	int		buf_pos;
 	int		i;
-	
+
 	buf_pos = 0;
 	tmp = NULL;
 	while (data->line[data->pos]
-		&& !ft_isspace(data->line[data->pos]) 
+		&& !ft_isspace(data->line[data->pos])
 		&& !is_operator(data->line[data->pos]))
 	{
 		if (is_quote(data->line[data->pos]))
@@ -174,7 +174,7 @@ char	*read_word(t_data *data)
 			buffer[buf_pos] = tmp[i];
 			buf_pos++;
 			i++;
-		}	
+		}
 		free(tmp);
 	}
 	buffer[buf_pos] = '\0';
@@ -185,28 +185,32 @@ char	*read_word(t_data *data)
 
 t_token	*new_token(t_token_type type, char *value)
 {
-	t_token	*token; 
+	t_token	*token;
 
 	token = malloc(sizeof(t_token));
 	if (!token)
 		return (NULL);
 	token->type = type;
-	token->value = value;
+	token->value = ft_strdup(value);
 	token->next = NULL;
 	return (token);
 }
 
 void	add_token(t_token **head, t_token *new)
 {
+	t_token	*node;
+
+	node = NULL;
 	if (!*head)
 	{
 		*head = new;
-		(*head)->next = NULL;
 	}
 	else
 	{
-		new->next = *head;
-		*head = new;
+		node = *head;
+		while (node->next)
+			node = node->next;
+		node->next = new;
 	}
 }
 
@@ -234,7 +238,7 @@ t_token	*lexer(char *line)
 	char	*word;
 	t_token	*tok;
 	t_token_type	type;
-	
+
 	data.line = line;
 	tokens = NULL;
 	data.pos = 0;
@@ -243,11 +247,11 @@ t_token	*lexer(char *line)
 	{
 		while (ft_isspace(data.line[data.pos]))
 			data.pos++;
-		if (!data.line[data.pos]) 
+		if (!data.line[data.pos])
 			break ;
 		type = get_operator_type(&data);
 		if (type != WORD)
-		{		
+		{
 			add_token(&tokens, new_token(type, NULL));
 			data.pos++;
 		}
@@ -285,7 +289,7 @@ int	main()
 	char *line8 = "echo hello>file"; // redirection sans espace
 	char *line8b = "echo hello > file";
 	char *line8c = "cat<<EOF"; // sans espaces
-	char *line8d = "cat << EOF"; 
+	char *line8d = "cat << EOF";
 	char *line9 = "grep \"main\" <file.c | wc -l >> result.txt"; // commande complexe
 	char *line9a = "echo \\ word"; // \ a ne pas traiter dans le sujet
 	char *line9b = "echo ; word"; // ; a ne pas traiter aussi
