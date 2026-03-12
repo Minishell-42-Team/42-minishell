@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 15:54:24 by clwenhaj          #+#    #+#             */
-/*   Updated: 2026/03/11 20:32:42 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/03/12 15:34:34 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,7 +192,7 @@ t_token	*new_token(t_token_type type, char *value)
 		return (NULL);
 	token->type = type;
 	if (value)
-		if (value) token->value = ft_strdup(value); else token->value = NULL;
+		token->value = ft_strdup(value);
 	else
 		token->value = NULL;
 	token->next = NULL;
