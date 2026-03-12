@@ -24,7 +24,6 @@ int main(int argc, char **argv, char **envp)
 		if (*line)
 			add_history(line);
 		tokens = lexer(line);
-		print_tokens(tokens);
 		cmds = parser(tokens);
 		print_commands(cmds);
 		ft_free_command(&cmds);

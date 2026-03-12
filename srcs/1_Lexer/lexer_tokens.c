@@ -191,7 +191,10 @@ t_token	*new_token(t_token_type type, char *value)
 	if (!token)
 		return (NULL);
 	token->type = type;
-	token->value = ft_strdup(value);
+	if (value)
+		if (value) token->value = ft_strdup(value); else token->value = NULL;
+	else
+		token->value = NULL;
 	token->next = NULL;
 	return (token);
 }
