@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 15:44:47 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/11 20:24:02 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/03/14 00:25:52 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,5 +83,7 @@ int				is_type_redir(t_token *token);
 void			affect_token(t_token **token, t_token *token_to_be);
 void			ft_free_command(t_command_ast **command);
 char    *expand_variable(const char *str, int *pos);
+void			ft_free(void **nptr);
+int				affect_command_param(t_command_ast *command, t_token *token);
 
 #endif

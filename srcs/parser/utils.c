@@ -6,7 +6,7 @@
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/10 06:22:02 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/11 15:26:29 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/03/14 00:24:19 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,27 @@ int is_type_redir(t_token *token)
 void    affect_token(t_token **token, t_token *token_to_be)
 {
     *token = token_to_be;
+}
+
+int    affect_command_param(t_command_ast *command, t_token *token)
+{
+    t_list  *node;
+
+    node = NULL;
+    if (!command->command)
+    {
+        command->command = ft_strdup(token->value);
+        if (!command->command)
+            return (0);
+    }
+    else
+    {
+        node = ft_lstnew(ft_strdup(token->value));
+        if (!node)
+            return (0);
+        ft_lstadd_back(&command->args, node);
+    }
+    return (1);
 }
 
 static  void    ft_clear_redir(t_redir_file **head)
