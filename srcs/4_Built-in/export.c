@@ -1,25 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/05 15:45:59 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/13 15:48:13 by vnaoussi         ###   ########.fr       */
+/*   Created: 2026/03/16 12:57:08 by vnaoussi          #+#    #+#             */
+/*   Updated: 2026/03/16 15:04:51 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	quit_error(char *msg)
+void    ft_export(char **args, char **envp)
 {
-	write(2, msg, ft_strlen(msg));
-	return (1);
-}
+    int i;
 
-void	ft_free(void **nptr)
-{
-	free(*nptr);
-	*nptr = NULL;
+    i = -1;
+    if (!args)
+    {
+        while (envp[++i])
+            printf("%s\n", envp[i]);
+    }
 }

@@ -6,7 +6,7 @@
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/10 04:51:52 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/11 19:53:44 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/03/14 01:42:43 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@ static int ft_addredir(t_redir_file **head, t_token_type type, char *file)
 {
     t_redir_file    *node;
 
+    if (!file)
+        return (0);
     node = (t_redir_file *)malloc(sizeof(t_redir_file));
     if (!node)
         return (0);
@@ -48,41 +50,37 @@ static int ft_addredir(t_redir_file **head, t_token_type type, char *file)
     return (1);
 }
 
-int get_command_param(t_command_ast *command, t_token *token,
-        t_token **current_token)
+int get_command_param(t_command_ast *command, t_token **curr_token)
 {
-    t_list  *node;
-
-    node = NULL;
-    if (!token)
-        return (affect_token(current_token, NULL), 1);
-    else if (token->type == PIPE)
-        return (affect_token(current_token, token->next), 1);
-    else if (token->type == WORD && !command->command)
+    if (!(*curr_token))
+        return (1);
+    else if ((*curr_token)->type == PIPE && (*curr_token)->next)
+        return (affect_token(curr_token, (*curr_token)->next), 1);
+    else if ((*curr_token)->type == WORD && (*curr_token)->value)
     {
-        command->command = ft_strdup(token->value);
-        if (!command->command)
+        if (!affect_command_param(command, *curr_token))
             return (0);
     }
-    else if (is_type_redir(token) && token->next->type == WORD)
-        return (ft_addredir(&command->redirs, token->type, token->next->value)
-            && get_command_param(command, token->next->next, current_token));
+    else if (is_type_redir(*curr_token) && (*curr_token)->next)
+    {
+        if ((*curr_token)->next->type != WORD || !ft_addredir(&command->redirs,
+                (*curr_token)->type, (*curr_token)->next->value))
+            return (0);
+        *curr_token = (*curr_token)->next;
+    }
     else
-    {
-        node = ft_lstnew(ft_strdup(token->value));
-        if (!node)
-            return (0);
-        ft_lstadd_back(&command->args, node);
-    }
-    return (get_command_param(command, token->next, current_token));
+        return (0);
+    *curr_token = (*curr_token)->next;
+    if (get_command_param(command, curr_token))
+        return (1);
+    return (0);
 }
 
 static t_command_ast    *get_commands(t_token *tokens)
 {
-    t_token         *current_token;
+    t_token         *curr_token;
     t_command_ast   *cmds;
     t_command_ast   *current_cmd;
-    t_token         *head;
 
     if (!tokens)
         return (NULL);
@@ -90,25 +88,27 @@ static t_command_ast    *get_commands(t_token *tokens)
     if (!cmds)
         return (NULL);
     current_cmd = cmds;
-    head = tokens;
-    current_token = tokens;
-    while (get_command_param(current_cmd, head, &current_token)
-        && current_token)
+    curr_token = tokens;
+    while (get_command_param(current_cmd, &curr_token) && curr_token)
     {
         current_cmd->next = init_command();
         if (!current_cmd->next)
             return (ft_free_command(&cmds), NULL);
         current_cmd = current_cmd->next;
-        head = current_token;
     }
-    if (!current_token)
+    if (!curr_token)
         return (cmds);
     return (ft_free_command(&cmds), NULL);
 }
 
 t_command_ast   *parser(t_token *tokens)
 {
+    t_command_ast   *cmds;
+
     if (!tokens)
         return (NULL);
-    return (get_commands(tokens));
+    cmds = get_commands(tokens);
+    if (!cmds)
+        return (printf("error: parsing fail.\n"), NULL);
+    return (cmds);
 }

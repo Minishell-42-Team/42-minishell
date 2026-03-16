@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 15:44:47 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/11 20:24:02 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/03/16 15:26:43 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,13 @@
 #include <ctype.h>
 
 extern int g_status;
+
+typedef struct e_env_var
+{
+	char 				*key;
+	char 				*value;
+	struct e_env_var	*next;
+}	t_env_var;
 
 typedef enum e_token_type
 {
@@ -83,5 +90,8 @@ int				is_type_redir(t_token *token);
 void			affect_token(t_token **token, t_token *token_to_be);
 void			ft_free_command(t_command_ast **command);
 char    *expand_variable(const char *str, int *pos);
+void			ft_free(void **nptr);
+int				affect_command_param(t_command_ast *command, t_token *token);
+void			ft_export(char **argv, char **envp);
 
 #endif
