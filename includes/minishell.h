@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 15:44:47 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/16 13:23:42 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/03/16 15:26:43 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,13 @@
 #include <ctype.h>
 
 extern int g_status;
+
+typedef struct e_env_var
+{
+	char 				*key;
+	char 				*value;
+	struct e_env_var	*next;
+}	t_env_var;
 
 typedef enum e_token_type
 {

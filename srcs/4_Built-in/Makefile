@@ -17,7 +17,7 @@ $(NAME): $(OBJS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 test: all
-	$(CC) $(CFLAGS) tests/test_export.c $(NAME) $(LDFLAGS) -o $(TEST_NAME)
+	$(CC) $(CFLAGS) tests/test_builtin.c $(NAME) $(LDFLAGS) -o $(TEST_NAME)
 	@echo "Test executable created: ./$(TEST_NAME)"
 
 clean:
