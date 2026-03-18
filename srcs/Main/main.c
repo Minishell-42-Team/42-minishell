@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/03/18 02:03:34 by vnaoussi          #+#    #+#             */
+/*   Updated: 2026/03/18 14:19:02 by vnaoussi         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-int g_status = 0;
+int	g_status = 0;
 
 void	handle_signal(int sig)
 {
@@ -23,7 +35,7 @@ static void	check_builtin_and_do(t_command_ast *cmds, t_env_var **env,
 		if (!cmds->args)
 			ft_export(NULL, env);
 		else
-			ft_export((char*)cmds->args->content, env);
+			ft_export((char *)cmds->args->content, env);
 	}
 	else if (ft_strcmp(cmds->command, "unset") == 0 && cmds->args->content)
 		ft_unset(env, (char *)cmds->args->content);
@@ -35,7 +47,7 @@ static void	check_builtin_and_do(t_command_ast *cmds, t_env_var **env,
 
 static void	do_commands(t_minishell_data **data)
 {
-	t_command_ast *node;
+	t_command_ast	*node;
 
 	node = (*data)->cmds;
 	while (node)
@@ -47,7 +59,7 @@ static void	do_commands(t_minishell_data **data)
 
 static void	lp_read_loop(t_minishell_data **data)
 {
-	char			*line;
+	char	*line;
 
 	while (1)
 	{
@@ -64,7 +76,7 @@ static void	lp_read_loop(t_minishell_data **data)
 	}
 }
 
-int main(int argc, char **argv, char **envp)
+int	main(int argc, char **argv, char **envp)
 {
 	t_minishell_data	*data;
 	int					i;
@@ -85,6 +97,5 @@ int main(int argc, char **argv, char **envp)
 	ft_free_envs(&data->envs);
 	free(data);
 	rl_clear_history();
-//	clear_history();
 	return (g_status);
 }

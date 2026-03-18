@@ -12,11 +12,11 @@
 
 #include "minishell.h"
 
-void    ft_exit(t_minishell_data **data)
+void	ft_exit(t_minishell_data **data)
 {
-    ft_free_command(&(*data)->cmds);
-    free_tokens((*data)->tokens);
-    ft_free_envs(&(*data)->envs);
-    free(*data);
-    exit(EXIT_SUCCESS);
+	ft_free_command(&(*data)->cmds);
+	free_tokens((*data)->tokens);
+	ft_free_envs(&(*data)->envs);
+	free(*data);
+	exit(EXIT_SUCCESS);
 }

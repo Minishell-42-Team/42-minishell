@@ -20,30 +20,30 @@ RESET           = \033[0m
 all: $(LIBFT) $(BUILTIN_LIB) $(NAME)
 
 $(LIBFT):
-	@echo "$(YELLOW)Compiling libft...$(RESET)"
+	@printf "$(YELLOW)Compiling libft...$(RESET)\n"
 	@$(MAKE) -C $(LIBFT_DIR)
 
 $(BUILTIN_LIB):
-	@echo "$(YELLOW)Compiling built-ins...$(RESET)"
+	@printf "$(YELLOW)Compiling built-ins...$(RESET)\n"
 	@$(MAKE) -C $(BUILTIN_DIR)
 
 $(NAME): $(OBJS) $(BUILTIN_LIB) $(LIBFT)
-	@echo "$(YELLOW)Linking $(NAME)...$(RESET)"
+	@printf "$(YELLOW)Linking $(NAME)...$(RESET)\n"
 	@$(CC) $(OBJS) $(BUILTIN_LIB) $(LDFLAGS) -o $(NAME)
-	@echo "$(GREEN)$(NAME) created successfully!$(RESET)"
+	@printf "$(GREEN)$(NAME) created successfully!$(RESET)\n"
 
 %.o: %.c
-	@echo "$(YELLOW)Compiling $<...$(RESET)"
+	@printf "$(YELLOW)Compiling $<...$(RESET)\n"
 	@$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	@echo "$(RED)Deleting object files...$(RESET)"
+	@printf "$(RED)Deleting object files...$(RESET)\n"
 	@rm -f $(OBJS)
 	@$(MAKE) -C $(LIBFT_DIR) clean
 	@$(MAKE) -C $(BUILTIN_DIR) clean
 
 fclean: clean
-	@echo "$(RED)Deleting $(NAME)...$(RESET)"
+	@printf "$(RED)Deleting $(NAME)...$(RESET)\n"
 	@rm -f $(NAME)
 	@$(MAKE) -C $(LIBFT_DIR) fclean
 	@$(MAKE) -C $(BUILTIN_DIR) fclean
