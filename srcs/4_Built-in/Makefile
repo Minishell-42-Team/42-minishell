@@ -5,7 +5,7 @@ CC = cc
 CFLAGS = -Wall -Wextra -Werror -I ../../includes -I ../../libft
 LDFLAGS = -L../../libft -lft
 
-SRCS = export.c
+SRCS = export.c utils_env_vars.c unset.c
 OBJS = $(SRCS:.c=.o)
 
 all: $(NAME)

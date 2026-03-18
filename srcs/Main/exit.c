@@ -1,25 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/05 15:45:59 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/16 17:03:26 by vnaoussi         ###   ########.fr       */
+/*   Created: 2026/03/18 02:03:34 by vnaoussi          #+#    #+#             */
+/*   Updated: 2026/03/18 02:21:47 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	quit_error(char *msg)
+void    ft_exit(t_minishell_data **data)
 {
-	write(2, msg, ft_strlen(msg));
-	return (1);
-}
-
-void	ft_free(void **nptr)
-{
-	free(*nptr);
-	*nptr = NULL;
+    ft_free_command(&(*data)->cmds);
+    free_tokens((*data)->tokens);
+    ft_free_envs(&(*data)->envs);
+    free(*data);
+    exit(EXIT_SUCCESS);
 }

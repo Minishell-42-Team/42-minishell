@@ -1,6 +1,6 @@
 NAME            = minishell
 CC              = cc
-CFLAGS          = -Wall -Wextra -Werror -Iincludes -Ilibft
+CFLAGS          = -Wall -Wextra -Werror -Iincludes -Ilibft -Isrcs/4_Built-in
 LDFLAGS         = -Llibft -lft -lreadline
 
 SRCS            = $(shell find ./srcs -name "*.c" | grep -v "4_Built-in")
