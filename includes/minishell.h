@@ -6,14 +6,14 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 15:44:47 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/16 15:26:43 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/03/18 02:19:26 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# include "libft.h"
+# include "builtin.h"
 # include <stdio.h>
 # include <stdlib.h>
 # include <readline/readline.h>
@@ -26,13 +26,6 @@
 #include <ctype.h>
 
 extern int g_status;
-
-typedef struct e_env_var
-{
-	char 				*key;
-	char 				*value;
-	struct e_env_var	*next;
-}	t_env_var;
 
 typedef enum e_token_type
 {
@@ -72,6 +65,12 @@ typedef struct	s_data
 	int	pos;
 } t_data;
 
+typedef struct s_minishell_data
+{
+	t_command_ast	*cmds;
+	t_token			*tokens;
+	t_env_var		*envs;
+}	t_minishell_data;
 
 int				quit_error(char *msg);
 t_token_type	get_operator_type(t_data *data);
@@ -92,6 +91,6 @@ void			ft_free_command(t_command_ast **command);
 char    *expand_variable(const char *str, int *pos);
 void			ft_free(void **nptr);
 int				affect_command_param(t_command_ast *command, t_token *token);
-void			ft_export(char **argv, char **envp);
+void			ft_exit(t_minishell_data **data);
 
 #endif

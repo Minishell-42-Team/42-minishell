@@ -12,11 +12,31 @@
 
 #include "minishell.h"
 
+static void	print_args_and_redirs(t_command_ast *curr)
+{
+	t_list			*arg;
+	t_redir_file	*redir;
+
+	printf("Args: ");
+	arg = curr->args;
+	while (arg)
+	{
+		printf("[%s] ", (char *)arg->content);
+		arg = arg->next;
+	}
+	printf("\nRedirs: ");
+	redir = curr->redirs;
+	while (redir)
+	{
+		printf("(%s: %s) ", token_type_str(redir->type), redir->file);
+		redir = redir->next;
+	}
+	printf("\n\n");
+}
+
 void	print_commands(t_command_ast *cmds)
 {
 	t_command_ast	*curr;
-	t_list			*arg;
-	t_redir_file	*redir;
 	int				i;
 
 	curr = cmds;
@@ -25,21 +45,7 @@ void	print_commands(t_command_ast *cmds)
 	{
 		printf("\033[1;34m--- Command %d ---\033[0m\n", i++);
 		printf("Command: %s\n", curr->command);
-		printf("Args: ");
-		arg = curr->args;
-		while (arg)
-		{
-			printf("[%s] ", (char *)arg->content);
-			arg = arg->next;
-		}
-		printf("\nRedirs: ");
-		redir = curr->redirs;
-		while (redir)
-		{
-			printf("(%s: %s) ", token_type_str(redir->type), redir->file);
-			redir = redir->next;
-		}
-		printf("\n\n");
+		print_args_and_redirs(curr);
 		curr = curr->next;
 	}
 }

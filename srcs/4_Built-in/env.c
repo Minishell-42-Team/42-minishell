@@ -1,25 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/05 15:45:59 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/16 17:03:26 by vnaoussi         ###   ########.fr       */
+/*   Created: 2026/03/18 13:28:04 by vnaoussi          #+#    #+#             */
+/*   Updated: 2026/03/18 14:10:51 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "builtin.h"
 
-int	quit_error(char *msg)
+void	ft_env(t_env_var *envs)
 {
-	write(2, msg, ft_strlen(msg));
-	return (1);
-}
+	t_env_var	*node;
 
-void	ft_free(void **nptr)
-{
-	free(*nptr);
-	*nptr = NULL;
+	node = envs;
+	while (node)
+	{
+		if (node->value)
+		{
+			printf("%s=", node->key);
+			printf("'%s'\n", node->value);
+		}
+		node = node->next;
+	}
 }
