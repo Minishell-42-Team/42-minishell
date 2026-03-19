@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 15:44:47 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/18 02:19:26 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/03/19 16:02:24 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <unistd.h>
+# include <fcntl.h>
+# include <sys/wait.h>
 # include <signal.h>
 # define SIG_ERROR_MSG "Error : fail to catch a signal.\n"
 
@@ -92,5 +94,9 @@ char    *expand_variable(const char *str, int *pos);
 void			ft_free(void **nptr);
 int				affect_command_param(t_command_ast *command, t_token *token);
 void			ft_exit(t_minishell_data **data);
+
+int		apply_redirections(t_redir_file *redirs);
+int     handle_heredoc(const char *delimiter);
+
 
 #endif
