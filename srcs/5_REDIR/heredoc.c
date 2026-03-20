@@ -6,7 +6,7 @@
 /*   By: clwenhaj <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 13:59:45 by clwenhaj          #+#    #+#             */
-/*   Updated: 2026/03/19 16:08:57 by clwenhaj         ###   ########.fr       */
+/*   Updated: 2026/03/20 10:29:53 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,10 @@ int	handle_heredoc(const char *delimiter)
 	{
 		line = readline("> ");
 		if (!line)
+		{
+			printf("warning: heredoc ended by EOF\n");
 			break ;
+		}
 		if (ft_strcmp(line, delimiter) == 0)
 		{
 			free(line);

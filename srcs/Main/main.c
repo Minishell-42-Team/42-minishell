@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 02:03:34 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/19 13:46:12 by clwenhaj         ###   ########.fr       */
+/*   Updated: 2026/03/20 12:35:24 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ static void	check_builtin_and_do(t_command_ast *cmds, t_env_var **env,
 	stdout_copy = dup(STDOUT_FILENO);
 	if (cmds->redirs)
 	{
-		if (apply_redirections(cmds->redirs) < 0)
+		if (apply_redirections(cmds->redirs) == 0)
 		{
 			dup2(stdin_copy, STDIN_FILENO);
 			dup2(stdout_copy, STDOUT_FILENO);
