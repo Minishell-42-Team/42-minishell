@@ -6,7 +6,7 @@
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 13:06:54 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/18 14:08:28 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/03/19 22:55:42 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ typedef struct e_env_var
 	struct e_env_var	*next;
 }	t_env_var;
 
-void	*ft_export(char *args, t_env_var **env_vars);
+void	*ft_export(char *args, t_env_var **env_vars, t_list **execredirs);
 void	add_env_var(t_env_var **head, char *key, char *value);
 void	print_env_vars(t_env_var *env_var);
 void	ft_free_envs(t_env_var **env_vars);

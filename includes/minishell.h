@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 15:44:47 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/18 02:19:26 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/03/20 01:05:49 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@
 # include <readline/history.h>
 # include <unistd.h>
 # include <signal.h>
+# include <sys/wait.h>
+# include <fcntl.h>
 # define SIG_ERROR_MSG "Error : fail to catch a signal.\n"
 
 #include <string.h>
@@ -70,6 +72,7 @@ typedef struct s_minishell_data
 	t_command_ast	*cmds;
 	t_token			*tokens;
 	t_env_var		*envs;
+	t_list			*execdirs;
 }	t_minishell_data;
 
 int				quit_error(char *msg);
@@ -92,5 +95,6 @@ char    *expand_variable(const char *str, int *pos);
 void			ft_free(void **nptr);
 int				affect_command_param(t_command_ast *command, t_token *token);
 void			ft_exit(t_minishell_data **data);
+int				run_command(t_command_ast *command, t_minishell_data **data);
 
 #endif

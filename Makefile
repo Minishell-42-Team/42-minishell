@@ -56,4 +56,8 @@ debug: re
 gdb: CFLAGS += -g3
 gdb: re
 
+test: re
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./minishell
+
+
 .PHONY: all clean fclean re
