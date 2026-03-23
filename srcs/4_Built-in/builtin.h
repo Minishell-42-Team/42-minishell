@@ -30,5 +30,7 @@ void	print_env_vars(t_env_var *env_var);
 void	ft_free_envs(t_env_var **env_vars);
 void	ft_unset(t_env_var **env_vars, char *key);
 void	ft_env(t_env_var *envs);
+char	**env_to_array(t_env_var *env_vars);
+void	ft_free_table(char ***table, int len);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/16 12:57:08 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/20 11:36:17 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/03/23 16:07:55 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,11 +31,10 @@ static int	set_dir(char *dir, t_list **execdirs)
 	int		len;
 
 	len = ft_strlen(dir);
-	dir_c = (char *)ft_calloc(len + 2, sizeof(char));
+	dir_c = (char *)ft_calloc(len + 1, sizeof(char));
 	if (!dir_c)
 		return (0);
-	ft_strlcat(dir_c, dir, len + 2);
-	ft_strlcat(dir_c, "/", len + 2);
+	ft_strlcat(dir_c, dir, len + 1);
 	node = ft_lstnew(dir_c);
 	if (!node)
 		return (0);

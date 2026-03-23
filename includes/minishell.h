@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 15:44:47 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/20 01:05:49 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/03/23 15:54:53 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,7 @@ char    *expand_variable(const char *str, int *pos);
 void			ft_free(void **nptr);
 int				affect_command_param(t_command_ast *command, t_token *token);
 void			ft_exit(t_minishell_data **data);
-int				run_command(t_command_ast *command, t_minishell_data **data);
+void				run_command(t_command_ast *command, t_minishell_data **data);
+void			ft_free_table(char ***table, int len);
 
 #endif

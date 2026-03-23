@@ -5,7 +5,7 @@ CC = cc
 CFLAGS = -Wall -Wextra -Werror -I ../../includes -I ../../libft
 LDFLAGS = -L../../libft -lft
 
-SRCS = export.c utils_env_vars.c unset.c env.c
+SRCS = export.c utils_env_vars.c env_to_array.c unset.c env.c
 OBJS = $(SRCS:.c=.o)
 
 all: $(NAME)
