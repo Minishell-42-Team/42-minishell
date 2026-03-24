@@ -6,7 +6,7 @@
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 02:03:34 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/24 09:41:58 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/03/24 17:22:28 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ void	handle_signal(int sig)
 	return (0);
 }*/
 
-static void	lp_read_loop(t_minishell_data **data)
+static void *lp_read_loop(t_minishell_data **data)
 {
 	char	*line;
 
@@ -55,7 +55,7 @@ static void	lp_read_loop(t_minishell_data **data)
 	{
 		line = readline("minishell> ");
 		if (!line)
-			exit(EXIT_SUCCESS);
+			return (printf("exit\n"), exit(EXIT_SUCCESS), NULL);
 		add_history(line);
 		(*data)->tokens = lexer(line);
 		(*data)->cmds = parser((*data)->tokens);
@@ -64,6 +64,7 @@ static void	lp_read_loop(t_minishell_data **data)
 		free_tokens((*data)->tokens);
 		free(line);
 	}
+	return (NULL);
 }
 
 int	main(int argc, char **argv, char **envp)

@@ -6,7 +6,7 @@
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/23 23:49:38 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/24 12:51:39 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/03/24 17:19:45 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,12 +88,12 @@ void	execute_pipeline(t_command_ast *cmds, t_minishell_data **data)
 
 	if (!init_bf_execute(cmds, &cmd, &pids, &fd_in))
 		return ;
-	i = 0;
+	i = -1;
 	while (cmd)
 	{
 		if (cmd->next && !set_pipe(pipefd))
 			return ;
-		pids[i++] = fork();
+		pids[++i] = fork();
 		if (pids[i] == 0)
 		{
 			dup2_close(fd_in, cmd, pipefd[0], pipefd[1]);
