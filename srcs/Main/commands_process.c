@@ -5,115 +5,103 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/19 23:18:10 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/23 16:21:55 by vnaoussi         ###   ########.fr       */
+/*   Created: 2026/03/23 23:49:38 by vnaoussi          #+#    #+#             */
+/*   Updated: 2026/03/24 12:51:39 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static char	*get_link_to_file(char *command, t_list *execdirs)
+static int	set_pipe(int pipefd[2])
 {
-	char	*access_link;
-	t_list	*node;
-	int		len;
-
-	node = execdirs;
-	while (node)
-	{
-		len = ft_strlen(command) + ft_strlen((char *)node->content) + 1;
-		access_link = (char *)ft_calloc(len + 1, sizeof(char));
-		if (!access_link)
-			return (NULL);
-		ft_strlcat(access_link, (const char *)node->content, len + 1);
-		ft_strlcat(access_link, "/", len + 1);
-		ft_strlcat(access_link, command, len + 1);
-		if (access(access_link, F_OK) == 0 && access(access_link, X_OK) == 0)
-			return (access_link);
-		free(access_link);
-		node = node->next;
-	}
-	return (NULL);
-}
-
-static int	apply_redirections(t_redir_file *redir)
-{
-	int fd;
-
-	while (redir)
-	{
-		if (redir->type == REDIR_OUT)
-			fd = open(redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		else if (redir->type == APPEND)
-			fd = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-		else if (redir->type == REDIR_IN)
-			fd = open(redir->file, O_RDONLY);
-		if (fd == -1)
-			return (perror(redir->file), 0);
-		if (redir->type == REDIR_IN)
-			dup2(fd, STDIN_FILENO);
-		else
-			dup2(fd, STDOUT_FILENO);
-		close(fd);
-		redir = redir->next;
-	}
+	if (pipe(pipefd) == -1)
+		return (perror("pipe"), 0);
 	return (1);
 }
 
-static char **get_args(t_command_ast *command, t_minishell_data **data,
-		int *len)
+static void	dup2_close(int fd_in, t_command_ast *cmd, int pipfd_in,
+		int pipfd_out)
 {
-	char	**args;
-	char	*access_link;
-	t_list	*node;
-	int		i;
+	if (fd_in != STDIN_FILENO)
+	{
+		dup2(fd_in, STDIN_FILENO);
+		close(fd_in);
+	}
+	if (cmd->next)
+	{
+		close(pipfd_in);
+		dup2(pipfd_out, STDOUT_FILENO);
+		close(pipfd_out);
+	}
+}
 
-	access_link = get_link_to_file(command->command, (*data)->execdirs);
-	if (!access_link)
-		return (printf("We cannot execute command.\n"), NULL);
+static void	ft_wait_child(t_command_ast *cmd, pid_t *pids)
+{
+	t_command_ast	*node;
+	int				status;
+	int				i;
+
+	node = cmd;
 	i = 0;
-	*len = ft_lstsize(command->args);
-	args = (char **)malloc(sizeof(char *) * (*len + 2));
-	if (!args)
-		return (free(access_link), NULL);
-	args[0] = access_link;
-	node = command->args;
 	while (node)
 	{
-		args[++i] = (char *)node->content;
+		waitpid(pids[i++], &status, 0);
+		if (!node->next)
+		{
+			if (WIFEXITED(status))
+				g_status = WEXITSTATUS(status);
+			else if (WIFSIGNALED(status))
+				g_status = 128 + WTERMSIG(status);
+		}
 		node = node->next;
 	}
-	args[i + 1] = NULL;
-	return (args);
 }
 
-void	run_command(t_command_ast *command, t_minishell_data **data)
+static int init_bf_execute(t_command_ast *cmds, t_command_ast **cmd,
+		pid_t **pids, int *fd_in)
 {
-	pid_t	pid;
-	int		status;
-	char	**args;
-	char	**envp;
-	int		len;
+	t_command_ast	*node;
+	int				i;
 
-	pid = fork();
-	if (pid == 0)
+	node = cmds;
+	*cmd = cmds;
+	*fd_in = STDIN_FILENO;
+	i = 0;
+	while (node)
 	{
-		if (!apply_redirections(command->redirs))
-			exit(EXIT_FAILURE);
-		args = get_args(command, data, &len);
-		if (!args)
-			exit(EXIT_FAILURE);
-		envp = env_to_array((*data)->envs);
-		if (execve(args[0], args, envp) == - 1)
-			perror("execve");
-		ft_free_table(&args, len);
-		ft_free_table(&envp, ft_lstsize((t_list *)(*data)->envs));
-		exit(EXIT_FAILURE);
+		i++;
+		node = node->next;
 	}
-	else if (pid > 0)
-	{
-		waitpid(pid, &status, 0);
-		g_status = WEXITSTATUS(status);
-	}
+	*pids = (pid_t *)malloc(sizeof(pid_t) * i);
+	if (!*pids)
+		return (0);
+	return (i);
 }
 
+void	execute_pipeline(t_command_ast *cmds, t_minishell_data **data)
+{
+	int				pipefd[2];
+	int				fd_in;
+	pid_t			*pids;
+	t_command_ast	*cmd;
+	int				i;
+
+	if (!init_bf_execute(cmds, &cmd, &pids, &fd_in))
+		return ;
+	i = 0;
+	while (cmd)
+	{
+		if (cmd->next && !set_pipe(pipefd))
+			return ;
+		pids[i++] = fork();
+		if (pids[i] == 0)
+		{
+			dup2_close(fd_in, cmd, pipefd[0], pipefd[1]);
+			fork_child_do(cmd, data);
+		}
+		else
+			fork_parent_do(&fd_in, cmd, pipefd[0], pipefd[1]);
+		cmd = cmd->next;
+	}
+	ft_wait_child(cmds, pids);
+}

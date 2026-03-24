@@ -6,7 +6,7 @@
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 02:03:34 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/19 23:13:21 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/03/24 09:41:58 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	handle_signal(int sig)
 		g_status = 0;
 }
 
-static int	check_builtin_and_do(t_command_ast *cmds, t_env_var **env,
+/*static int	check_builtin_and_do(t_command_ast *cmds, t_env_var **env,
 		t_minishell_data **data)
 {
 	if (ft_strcmp(cmds->command, "export") == 0)
@@ -45,20 +45,7 @@ static int	check_builtin_and_do(t_command_ast *cmds, t_env_var **env,
 	else if (ft_strcmp(cmds->command, "exit") == 0)
 		return (ft_exit(data), 1);
 	return (0);
-}
-
-static void	do_commands(t_minishell_data **data)
-{
-	t_command_ast	*node;
-
-	node = (*data)->cmds;
-	while (node)
-	{
-		if (!check_builtin_and_do(node, &(*data)->envs, data))
-			run_command(node, data);
-		node = node->next;
-	}
-}
+}*/
 
 static void	lp_read_loop(t_minishell_data **data)
 {
@@ -72,7 +59,7 @@ static void	lp_read_loop(t_minishell_data **data)
 		add_history(line);
 		(*data)->tokens = lexer(line);
 		(*data)->cmds = parser((*data)->tokens);
-		do_commands(data);
+		execute_pipeline((*data)->cmds, data);
 		ft_free_command(&(*data)->cmds);
 		free_tokens((*data)->tokens);
 		free(line);

@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 15:44:47 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/23 15:54:53 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/03/24 12:01:50 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,5 +97,9 @@ int				affect_command_param(t_command_ast *command, t_token *token);
 void			ft_exit(t_minishell_data **data);
 void				run_command(t_command_ast *command, t_minishell_data **data);
 void			ft_free_table(char ***table, int len);
+void			fork_child_do(t_command_ast *command, t_minishell_data **data);
+void			fork_parent_do(int *fd_in, t_command_ast *command,
+		int pipefd_in, int pipefd_out);
+void			execute_pipeline(t_command_ast *cmds, t_minishell_data **data);
 
 #endif
