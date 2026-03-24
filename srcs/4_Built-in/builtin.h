@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 13:06:54 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/19 22:55:42 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/03/20 13:34:39 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,5 +30,8 @@ void	print_env_vars(t_env_var *env_var);
 void	ft_free_envs(t_env_var **env_vars);
 void	ft_unset(t_env_var **env_vars, char *key);
 void	ft_env(t_env_var *envs);
+void	ft_cd(char *args, t_env_var *envp);
+void	ft_echo(t_list *args);
+void	ft_pwd(void);
 
 #endif
