@@ -6,7 +6,7 @@
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 23:18:10 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/24 12:34:04 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/03/24 19:00:00 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,31 @@ static char	*get_link_to_file(char *command, t_list *execdirs)
 	return (NULL);
 }
 
-static int	apply_redirections(t_redir_file *redir)
+int	handle_heredoc(const char *delimiter)
 {
-	int fd;
+	int		pipefd[2];
+	char	*line;
+
+	if (pipe(pipefd) == -1)
+		return (perror("pipe"), -1);
+	while (1)
+	{
+		line = readline("> ");
+		if (!line || ft_strcmp(line, delimiter) == 0)
+		{
+			free(line);
+			break ;
+		}
+		ft_putendl_fd(line, pipefd[1]);
+		free(line);
+	}
+	close(pipefd[1]);
+	return (pipefd[0]);
+}
+
+int	apply_redirections(t_redir_file *redir)
+{
+	int	fd;
 
 	while (redir)
 	{
@@ -48,9 +70,11 @@ static int	apply_redirections(t_redir_file *redir)
 			fd = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
 		else if (redir->type == REDIR_IN)
 			fd = open(redir->file, O_RDONLY);
+		else if (redir->type == HEREDOC)
+			fd = handle_heredoc(redir->file);
 		if (fd == -1)
 			return (perror(redir->file), 0);
-		if (redir->type == REDIR_IN)
+		if (redir->type == REDIR_IN || redir->type == HEREDOC)
 			dup2(fd, STDIN_FILENO);
 		else
 			dup2(fd, STDOUT_FILENO);
@@ -60,7 +84,7 @@ static int	apply_redirections(t_redir_file *redir)
 	return (1);
 }
 
-static char **get_args(t_command_ast *command, t_minishell_data **data,
+static char	**get_args(t_command_ast *command, t_minishell_data **data,
 		int *len)
 {
 	char	**args;
@@ -99,7 +123,7 @@ void	fork_child_do(t_command_ast *command, t_minishell_data **data)
 	if (!args)
 		exit(EXIT_FAILURE);
 	envp = env_to_array((*data)->envs);
-	if (execve(args[0], args, envp) == - 1)
+	if (execve(args[0], args, envp) == -1)
 		perror("execve");
 	ft_free_table(&args, len);
 	ft_free_table(&envp, ft_lstsize((t_list *)(*data)->envs));
@@ -117,4 +141,3 @@ void	fork_parent_do(int *fd_in, t_command_ast *command, int pipefd_in,
 		*fd_in = pipefd_in;
 	}
 }
-

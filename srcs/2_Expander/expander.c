@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/10 09:33:54 by clwenhaj          #+#    #+#             */
-/*   Updated: 2026/03/16 15:12:10 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/03/23 18:55:48 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,29 +20,38 @@
 
 #include "minishell.h"
 
-char    *expand_variable(const char *str, int *pos)
+char    *expand_variable(const char *str, int *pos, t_env_var *env_vars)
 {
-	char	key[256];
-	int		k;
-	char	*val;
-	char	*value;
+	char		key[256];
+	int			k;
+	t_env_var	*node;
 
+	if (!str || !pos)
+		return (ft_strdup(""));
 	if (str[*pos] == '?')
 	{
 		(*pos)++;
-		val = ft_itoa(g_status);
-		return (val);
+		return (ft_itoa(g_status));
 	}
 	k = 0;
-	while (ft_isalnum(str[*pos]) || str[*pos] == '_')
+	while (str[*pos] && (ft_isalnum(str[*pos]) || str[*pos] == '_'))
 	{
 		if (k < 255)
 			key[k++] = str[*pos];
 		(*pos)++;
 	}
 	key[k] = '\0';
-	value = getenv(key);
-	if (!value)
-		return (ft_strdup(""));
-	return (ft_strdup(value));
+	node = env_vars;
+	while (node)
+	{
+		if (node->key && ft_strcmp(node->key, key) == 0)
+		{
+			if (node->value)
+				return (ft_strdup(node->value));
+			else
+				return (ft_strdup(""));
+		}
+		node = node->next;
+	}
+	return (ft_strdup(""));
 }
