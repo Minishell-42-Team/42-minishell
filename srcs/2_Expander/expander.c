@@ -20,11 +20,28 @@
 
 #include "minishell.h"
 
-char    *expand_variable(const char *str, int *pos, t_env_var *env_vars)
+static char	*get_env_val(const char *key, t_env_var *env_vars)
 {
-	char		key[256];
-	int			k;
 	t_env_var	*node;
+
+	node = env_vars;
+	while (node)
+	{
+		if (node->key && ft_strcmp(node->key, key) == 0)
+		{
+			if (node->value)
+				return (ft_strdup(node->value));
+			return (ft_strdup(""));
+		}
+		node = node->next;
+	}
+	return (ft_strdup(""));
+}
+
+char	*expand_variable(const char *str, int *pos, t_env_var *env_vars)
+{
+	char	key[256];
+	int		k;
 
 	if (!str || !pos)
 		return (ft_strdup(""));
@@ -41,17 +58,5 @@ char    *expand_variable(const char *str, int *pos, t_env_var *env_vars)
 		(*pos)++;
 	}
 	key[k] = '\0';
-	node = env_vars;
-	while (node)
-	{
-		if (node->key && ft_strcmp(node->key, key) == 0)
-		{
-			if (node->value)
-				return (ft_strdup(node->value));
-			else
-				return (ft_strdup(""));
-		}
-		node = node->next;
-	}
-	return (ft_strdup(""));
+	return (get_env_val(key, env_vars));
 }

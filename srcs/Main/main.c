@@ -103,7 +103,7 @@ static void	lp_read_loop(t_minishell_data **data)
 		if (!line)
 		{
 			printf("exit\n");
-			exit(EXIT_SUCCESS);
+			return ;
 		}
 		add_history(line);
 		(*data)->tokens = lexer(line, (*data)->envs);
@@ -136,6 +136,7 @@ int	main(int argc, char **argv, char **envp)
 		ft_export(envp[i], &data->envs, &data->execdirs);
 	lp_read_loop(&data);
 	ft_free_envs(&data->envs);
+	ft_lstclear(&data->execdirs, free);
 	free(data);
 	rl_clear_history();
 	return (g_status);

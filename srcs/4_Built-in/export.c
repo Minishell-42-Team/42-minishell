@@ -6,7 +6,7 @@
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/16 12:57:08 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/23 16:07:55 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/03/25 22:59:48 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ static int	get_execdirs(char *path, t_list **execdirs)
 	while (dirs[++i])
 	{
 		while (node && ft_strcmp(node->content, dirs[i]) != 0)
-				node = node->next;
+			node = node->next;
 		if (!node)
 			if (!set_dir(dirs[i], execdirs))
 				return (ft_lstclear(execdirs, free), 0);

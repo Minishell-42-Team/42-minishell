@@ -6,7 +6,7 @@
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/23 23:49:38 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/24 17:19:45 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/03/25 23:04:37 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ static void	ft_wait_child(t_command_ast *cmd, pid_t *pids)
 	}
 }
 
-static int init_bf_execute(t_command_ast *cmds, t_command_ast **cmd,
+static int	init_bf_execute(t_command_ast *cmds, t_command_ast **cmd,
 		pid_t **pids, int *fd_in)
 {
 	t_command_ast	*node;
@@ -103,5 +103,5 @@ void	execute_pipeline(t_command_ast *cmds, t_minishell_data **data)
 			fork_parent_do(&fd_in, cmd, pipefd[0], pipefd[1]);
 		cmd = cmd->next;
 	}
-	ft_wait_child(cmds, pids);
+	(ft_wait_child(cmds, pids), free(pids));
 }

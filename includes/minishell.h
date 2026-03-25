@@ -6,7 +6,7 @@
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 15:44:47 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/24 18:30:00 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/03/25 22:44:26 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,9 +77,6 @@ typedef struct s_minishell_data
 
 int				quit_error(char *msg);
 t_token_type	get_operator_type(t_data *data);
-char			*read_word_between_quotes(t_data *data, char quote);
-char			*read_normal_word(t_data *data);
-char			*read_word(t_data *data);
 t_token			*new_token(t_token_type type, char *value);
 void			add_token(t_token **head, t_token *new);
 t_token			*lexer(char *line, t_env_var *env_vars);
@@ -104,5 +101,10 @@ void			fork_child_do(t_command_ast *command, t_minishell_data **data);
 void			fork_parent_do(int *fd_in, t_command_ast *command,
 					int pipefd_in, int pipefd_out);
 void			execute_pipeline(t_command_ast *cmds, t_minishell_data **data);
+int				is_operator(char c);
+int				is_quote(char c);
+int				ft_isspace(char c);
+t_token			*new_token(t_token_type type, char *value);
+void			add_token(t_token **head, t_token *new);
 
 #endif

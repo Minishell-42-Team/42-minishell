@@ -14,14 +14,11 @@
 
 int	handle_heredoc(const char *delimiter)
 {
-	int	pipefd[2];
+	int		pipefd[2];
 	char	*line;
 
 	if (pipe(pipefd) == -1)
-	{
-		perror("pipe");
-		return (-1);
-	}
+		return (perror("pipe"), -1);
 	while (1)
 	{
 		line = readline("> ");
@@ -41,10 +38,4 @@ int	handle_heredoc(const char *delimiter)
 	}
 	close(pipefd[1]);
 	return (pipefd[0]);
-/*	exit(0);
-	}
-	close(pipefd[1]);
-	wait(NULL);
-	dup2(pipefd[0], STDIN_FILENO);
-	return (pipefd[0]);*/
 }
