@@ -29,10 +29,24 @@ void	update_env(t_env_var *env, char *key, char *value)
 	}
 }
 
+static void	update_cd_env(t_env_var *envp, char *oldpwd)
+{
+	char	*pwd;
+
+	pwd = getcwd(NULL, 0);
+	if (!pwd)
+		perror("getcwd");
+	else
+	{
+		update_env(envp, "OLDPWD", oldpwd);
+		update_env(envp, "PWD", pwd);
+		free(pwd);
+	}
+}
+
 void	ft_cd(char *args, t_env_var *envp)
 {
 	char	*oldpwd;
-	char	*pwd;
 
 	if (!args)
 	{
@@ -46,15 +60,11 @@ void	ft_cd(char *args, t_env_var *envp)
 		return ;
 	}
 	if (chdir(args) != 0)
-		return (perror("cd"), free(oldpwd));
-	pwd = getcwd(NULL, 0);
-	if (!pwd)
-		perror("getcwd");
-	else
 	{
-		update_env(envp, "OLDPWD", oldpwd);
-		update_env(envp, "PWD", pwd);
-		free(pwd);
+		perror("cd");
+		free(oldpwd);
+		return ;
 	}
+	update_cd_env(envp, oldpwd);
 	free(oldpwd);
 }

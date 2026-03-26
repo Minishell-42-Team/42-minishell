@@ -15,14 +15,20 @@
 void	ft_free_envs(t_env_var **env_vars)
 {
 	t_env_var	*node;
+	t_env_var	*next;
 
+	if (!env_vars || !*env_vars)
+		return ;
 	node = *env_vars;
 	while (node)
 	{
-		*env_vars = (*env_vars)->next;
+		next = node->next;
+		free(node->key);
+		free(node->value);
 		free(node);
-		node = *env_vars;
+		node = next;
 	}
+	*env_vars = NULL;
 }
 
 void	print_env_vars(t_env_var *env_var)
@@ -51,7 +57,8 @@ static int	check_if_exit_and_replace(t_env_var *head, char *key,
 	{
 		if (!ft_strcmp(node->key, key))
 		{
-			free(node->value);
+			if (node->value)
+				free(node->value);
 			if (value)
 				node->value = ft_strdup(value);
 			else
