@@ -6,7 +6,7 @@
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 23:18:10 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/24 21:30:00 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/03/31 00:13:16 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ static char	**get_args(t_command_ast *command, t_minishell_data **data,
 
 	access_link = get_link_to_file(command->command, (*data)->execdirs);
 	if (!access_link)
-		return (printf("We cannot execute command.\n"), NULL);
+		return (printf("Minishell: %s: command not found\n", command->command), NULL);
 	i = 0;
 	*len = ft_lstsize(command->args);
 	args = (char **)malloc(sizeof(char *) * (*len + 2));
@@ -63,6 +63,33 @@ static char	**get_args(t_command_ast *command, t_minishell_data **data,
 	return (args);
 }
 
+int	check_built_parent(t_command_ast *cmd, t_minishell_data **data)
+{
+	int	stdin_save;
+	int	stdout_save;
+
+	if (ft_strcmp(cmd->command, "export") != 0 && ft_strcmp(cmd->command,
+		"unset") != 0 && ft_strcmp(cmd->command, "exit") != 0
+			&& ft_strcmp(cmd->command, "cd") != 0)
+		return (0);
+	stdin_save = dup(STDIN_FILENO);
+	stdout_save = dup(STDOUT_FILENO);
+	if (!apply_redirections(cmd->redirs))
+	{
+		dup2(stdin_save, STDIN_FILENO);
+		dup2(stdout_save, STDOUT_FILENO);
+		close(stdin_save);
+		close(stdout_save);
+		return (1);
+	}
+	exec_builtin(cmd, data);
+	dup2(stdin_save, STDIN_FILENO);
+	dup2(stdout_save, STDOUT_FILENO);
+	close(stdin_save);
+	close(stdout_save);
+	return (1);
+}
+
 void	fork_child_do(t_command_ast *command, t_minishell_data **data)
 {
 	char	**args;
@@ -71,9 +98,11 @@ void	fork_child_do(t_command_ast *command, t_minishell_data **data)
 
 	if (!apply_redirections(command->redirs))
 		exit(EXIT_FAILURE);
+	if (exec_builtin(command, data))
+		exit(g_status);
 	args = get_args(command, data, &len);
 	if (!args)
-		exit(EXIT_FAILURE);
+		exit(127);
 	envp = env_to_array((*data)->envs);
 	if (execve(args[0], args, envp) == -1)
 		perror("execve");

@@ -6,7 +6,7 @@
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 15:44:47 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/25 22:44:26 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/03/31 00:17:23 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,5 +106,9 @@ int				is_quote(char c);
 int				ft_isspace(char c);
 t_token			*new_token(t_token_type type, char *value);
 void			add_token(t_token **head, t_token *new);
-
+int				check_built_parent(t_command_ast *cmd, t_minishell_data **data);
+int				get_fdin(t_command_ast *cmd);
+int				get_fdout(t_command_ast *cmd);
+int				open_file(t_redir_file *redir);
+int				exec_builtin(t_command_ast *cmd, t_minishell_data **data);
 #endif

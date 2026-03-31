@@ -6,7 +6,7 @@
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 13:06:54 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/24 18:40:00 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/03/30 15:33:04 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,11 @@
 # include <stdlib.h>
 # include "libft.h"
 
-typedef struct e_env_var
+typedef struct s_env_var
 {
 	char				*key;
 	char				*value;
-	struct e_env_var	*next;
+	struct s_env_var	*next;
 }	t_env_var;
 
 void	*ft_export(char *args, t_env_var **env_vars, t_list **execredirs);
@@ -35,5 +35,6 @@ void	ft_free_table(char ***table, int len);
 void	ft_cd(char *args, t_env_var *envp);
 void	ft_echo(t_list *args);
 void	ft_pwd(void);
+int		ft_check_builtin_must_not_fork(char *command);
 
 #endif

@@ -6,13 +6,13 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 13:16:25 by clwenhaj          #+#    #+#             */
-/*   Updated: 2026/03/20 12:35:12 by clwenhaj         ###   ########.fr       */
+/*   Updated: 2026/03/30 15:12:34 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	open_file(t_redir_file *redir)
+int	open_file(t_redir_file *redir)
 {
 	int	fd;
 
