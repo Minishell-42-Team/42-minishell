@@ -6,7 +6,7 @@
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/23 23:49:38 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/25 23:04:37 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/03/30 15:45:00 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,8 @@ static void	ft_wait_child(t_command_ast *cmd, pid_t *pids)
 
 	node = cmd;
 	i = 0;
+	if (!pids)
+		return ;
 	while (node)
 	{
 		waitpid(pids[i++], &status, 0);
@@ -69,12 +71,21 @@ static int	init_bf_execute(t_command_ast *cmds, t_command_ast **cmd,
 	i = 0;
 	while (node)
 	{
-		i++;
+		if (cmds->next)
+			i++;
+		else if (!ft_check_builtin_must_not_fork(node->command)
+			&& ft_strcmp(node->command, "cd") != 0)
+			i++;
 		node = node->next;
+	}
+	if (i == 0)
+	{
+		*pids = NULL;
+		return (0);
 	}
 	*pids = (pid_t *)malloc(sizeof(pid_t) * i);
 	if (!*pids)
-		return (0);
+		return (-1);
 	return (i);
 }
 
@@ -86,7 +97,11 @@ void	execute_pipeline(t_command_ast *cmds, t_minishell_data **data)
 	t_command_ast	*cmd;
 	int				i;
 
-	if (!init_bf_execute(cmds, &cmd, &pids, &fd_in))
+	if (!cmds)
+		return ;
+	if (!cmds->next && check_built_parent(cmds, data))
+		return ;
+	if (init_bf_execute(cmds, &cmd, &pids, &fd_in) == -1)
 		return ;
 	i = -1;
 	while (cmd)
