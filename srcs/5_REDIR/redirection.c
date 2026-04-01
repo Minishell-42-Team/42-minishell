@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 13:16:25 by clwenhaj          #+#    #+#             */
-/*   Updated: 2026/03/30 15:12:34 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/01 11:33:24 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,21 +30,63 @@ int	open_file(t_redir_file *redir)
 	return (fd);
 }
 
+static int	dup2_last_redir_in(t_redir_file *redir, int *fd)
+{
+	int	fd_close;
+
+	if (!redir && *fd != STDIN_FILENO)
+		return (dup2(*fd, STDIN_FILENO), 1);
+	else if (!redir && *fd == STDIN_FILENO)
+		return (1);
+	else if (redir && redir->type != REDIR_IN)
+		return (dup2_last_redir_in(redir->next, fd));
+	else if (redir && redir->type == REDIR_IN)
+	{
+		*fd = open_file(redir);
+		if (*fd < 0)
+			return (0);
+		fd_close = *fd;
+	}
+	if (dup2_last_redir_in(redir->next, fd))
+		return (close(fd_close), 1);
+	else
+		return (close(fd_close), 0);
+}
+
+static int	dup2_last_redir_out(t_redir_file *redir, int *fd)
+{
+	int	fd_close;
+
+	if (!redir && *fd != STDOUT_FILENO)
+		return (dup2(*fd, STDOUT_FILENO), 1);
+	if (!redir && *fd == STDOUT_FILENO)
+		return (1);
+	if (redir && redir->type != REDIR_OUT && redir->type != APPEND)
+		return (dup2_last_redir_out(redir->next, fd));
+	if (redir && (redir->type == APPEND || redir->type == REDIR_OUT))
+	{
+		*fd = open_file(redir);
+		if (*fd < 0)
+			return (0);
+		fd_close = *fd;
+	}
+	if (dup2_last_redir_in(redir->next, fd))
+		return (close(fd_close), 1);
+	else
+		return (close(fd_close), 0);
+}
+
 int	apply_redirections(t_redir_file *redirs)
 {
 	int	fd;
 
-	while (redirs)
-	{
-		fd = open_file(redirs);
-		if (fd < 0)
-			return (0);
-		if (redirs->type == REDIR_OUT || redirs->type == APPEND)
-			dup2(fd, STDOUT_FILENO);
-		else
-			dup2(fd, STDIN_FILENO);
-		close(fd);
-		redirs = redirs->next;
-	}
+	if (!redirs)
+		return (1);
+	fd = STDIN_FILENO;
+	if (!dup2_last_redir_in(redirs, &fd))
+		return (0);
+	fd = STDOUT_FILENO;
+	if (!dup2_last_redir_out(redirs, &fd))
+		return (0);
 	return (1);
 }

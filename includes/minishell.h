@@ -6,7 +6,7 @@
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 15:44:47 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/31 00:17:23 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/01 00:21:30 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <stdlib.h>
 # include <readline/readline.h>
 # include <readline/history.h>
+# include <dirent.h>
 # include <unistd.h>
 # include <signal.h>
 # include <sys/wait.h>
@@ -111,4 +112,5 @@ int				get_fdin(t_command_ast *cmd);
 int				get_fdout(t_command_ast *cmd);
 int				open_file(t_redir_file *redir);
 int				exec_builtin(t_command_ast *cmd, t_minishell_data **data);
+
 #endif
