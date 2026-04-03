@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 15:44:47 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/03 11:55:08 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/03 13:44:51 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,4 +111,7 @@ int				get_fdin(t_command_ast *cmd);
 int				get_fdout(t_command_ast *cmd);
 int				open_file(t_redir_file *redir);
 int				exec_builtin(t_command_ast *cmd, t_minishell_data **data);
+void			handle_fork_signal(int sig);
+void			handle_signal(int sig);
+
 #endif

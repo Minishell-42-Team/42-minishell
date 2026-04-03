@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 23:18:10 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/01 21:16:20 by clwenhaj         ###   ########.fr       */
+/*   Updated: 2026/04/03 13:53:39 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,7 @@ void	fork_child_do(t_command_ast *command, t_minishell_data **data)
 	char	**envp;
 	int		len;
 
+	(signal(SIGINT, handle_fork_signal), signal(SIGQUIT, handle_fork_signal));
 	if (!apply_redirections(command->redirs))
 		exit(EXIT_FAILURE);
 	if (exec_builtin(command, data))
