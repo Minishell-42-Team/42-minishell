@@ -3,23 +3,28 @@
 /*                                                        :::      ::::::::   */
 /*   utils_for_buitins.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/30 13:59:37 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/31 00:20:33 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/02 11:21:13 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	exec_sbuiltin(t_command_ast *cmd, t_minishell_data **data)
+static int	exec_simple_builtin(t_command_ast *cmd, t_minishell_data **data)
 {
 	if (ft_strcmp(cmd->command, "env") == 0)
 		return (ft_env((*data)->envs), 1);
+	if (ft_strcmp(cmd->command, "echo") == 0)
+		return (ft_echo(cmd->args), 1);
+	if (ft_strcmp(cmd->command, "pwd") == 0)
+		return (ft_pwd(), 1);
 	if (ft_strcmp(cmd->command, "exit") == 0)
 		return (ft_exit(data), 1);
 	return (0);
 }
+
 static int	ft_export_builtin(t_command_ast *cmd, t_minishell_data **data)
 {
 	t_list	*args;
@@ -32,7 +37,7 @@ static int	ft_export_builtin(t_command_ast *cmd, t_minishell_data **data)
 		while (args)
 		{
 			ft_export((char *)args->content, &(*data)->envs,
-					&(*data)->execdirs);
+				&(*data)->execdirs);
 			args = args->next;
 		}
 		return (1);
@@ -40,7 +45,7 @@ static int	ft_export_builtin(t_command_ast *cmd, t_minishell_data **data)
 	return (0);
 }
 
-static int ft_unset_builtin(t_command_ast *cmd, t_minishell_data **data)
+static int	ft_unset_builtin(t_command_ast *cmd, t_minishell_data **data)
 {
 	t_list	*args;
 
@@ -59,11 +64,27 @@ static int ft_unset_builtin(t_command_ast *cmd, t_minishell_data **data)
 	return (0);
 }
 
-
-int exec_builtin(t_command_ast *cmd, t_minishell_data **data)
+static int	ft_cd_builtin(t_command_ast *cmd, t_minishell_data **data)
 {
-	if (exec_sbuiltin(cmd, data) || ft_export_builtin(cmd, data)
-			|| ft_unset_builtin(cmd, data))
+	char	*arg;
+
+	if (ft_strcmp(cmd->command, "cd") == 0)
+	{
+		arg = NULL;
+		if (cmd->args)
+			arg = (char *)cmd->args->content;
+		ft_cd(arg, (*data)->envs);
+		return (1);
+	}
+	return (0);
+}
+
+int	exec_builtin(t_command_ast *cmd, t_minishell_data **data)
+{
+	if (exec_simple_builtin(cmd, data)
+		|| ft_export_builtin(cmd, data)
+		|| ft_unset_builtin(cmd, data)
+		|| ft_cd_builtin(cmd, data))
 		return (1);
 	return (0);
 }

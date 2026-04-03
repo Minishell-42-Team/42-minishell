@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 15:44:47 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/03 11:33:01 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/03 11:55:08 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ typedef struct s_redir_file
 	struct s_redir_file	*next;
 	t_token_type		type;
 	char				*file;
+	int					heredoc_fd;
 }	t_redir_file;
 
 typedef struct s_command_ast
@@ -93,7 +94,6 @@ char			*expand_variable(const char *str,
 void			ft_free(void **nptr);
 int				affect_command_param(t_command_ast *command, t_token *token);
 void			ft_exit(t_minishell_data **data);
-void			run_command(t_command_ast *command, t_minishell_data **data);
 int				apply_redirections(t_redir_file *redir);
 int				handle_heredoc(const char *delimiter);
 void			ft_free_table(char ***table, int len);
