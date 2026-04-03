@@ -6,7 +6,7 @@
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/10 04:51:52 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/01 13:02:30 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/03 00:55:47 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,11 +107,19 @@ static t_command_ast	*get_commands(t_token *tokens)
 t_command_ast	*parser(t_token *tokens)
 {
 	t_command_ast	*cmds;
+	t_command_ast	*node;
 
 	if (!tokens)
 		return (NULL);
 	cmds = get_commands(tokens);
 	if (!cmds)
 		return (printf("error: parsing fail.\n"), NULL);
+	node = cmds;
+	while (node)
+	{
+		if (!get_matched_args(node))
+			return (ft_free_command(&cmds), NULL);
+		node = node->next;
+	}
 	return (cmds);
 }

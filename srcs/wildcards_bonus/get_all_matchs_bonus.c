@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_all_matchs.c                                   :+:      :+:    :+:   */
+/*   get_all_matchs_bonus.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/01 00:23:08 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/01 01:02:02 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/03 10:19:32 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,21 @@ static int	ft_matched(char *str_to_match, char *filename)
 {
 	if (!*str_to_match && !*filename)
 		return (1);
-	if (*str_to_match == "*" && *(filename + 1) != *(str_to_match + 1))
-		return (ft_matched(str_to_match, filename + 1));
-	if (*str_to_match == *filename)
-		return (ft_matched(str_to_match + 1, str_to_match + 1);
+	else if (*str_to_match == '*')
+	{
+		if (!*filename)
+			return (1);
+		if (!*(str_to_match + 1) && ft_matched(str_to_match, filename + 1))
+			return (1);
+		if (ft_matched(str_to_match + 1, filename + 1))
+			return (1);
+	}
+	else if (*str_to_match == *filename)
+		return (ft_matched(str_to_match + 1, filename + 1));
+	return (0);
 }
-static int	find_match_remove(char *str_to_match, t_command_ast *cmd)
+
+static int	find_match(char *str_to_match, t_list **args)
 {
 	DIR				*dir;
 	struct dirent	*entry;
@@ -30,7 +39,7 @@ static int	find_match_remove(char *str_to_match, t_command_ast *cmd)
 	dir = opendir(".");
 	entry = readdir(dir);
 	if (!entry)
-		retrun(printf("no matched found.\n"), 0);
+		return (printf("no matched found.\n"), 0);
 	while (entry)
 	{
 		if (ft_matched(str_to_match, entry->d_name))
@@ -38,7 +47,7 @@ static int	find_match_remove(char *str_to_match, t_command_ast *cmd)
 			new = ft_lstnew(entry->d_name);
 			if (!new)
 				return (perror("malloc"), 0);
-			ft_lstadd_front(&cmd->args, new);
+			ft_lstadd_back(args, new);
 		}
 		entry = readdir(dir);
 	}
@@ -47,20 +56,28 @@ static int	find_match_remove(char *str_to_match, t_command_ast *cmd)
 
 int	get_matched_args(t_command_ast *cmd)
 {
-	char	*str_to_match;
 	t_list	*arg;
+	t_list	*arg_to_free;
+	t_list	*args;
 
 	if (!cmd->args)
-		return ;
+		return (1);
 	arg = cmd->args;
-	while (str)
+	args = NULL;
+	while (arg)
 	{
 		if (ft_strchr((char *)arg->content, '*'))
 		{
-			str_to_match = (char *)arg->content;
-			if (!find_match_remove(str_to_match, cmd))
+			if (!find_match((char *)arg->content, &args))
 				return (0);
+			else
+				(arg_to_free = arg, arg = arg->next,
+				 ft_free_arg(&cmd->args, &arg_to_free));
 		}
-		str = str->next;
+		else
+			(ft_lstadd_back(&args, arg), arg = arg->next);
 	}
+	ft_lstclear(&cmd->args, free);
+	cmd->args = args;
+	return (1);
 }
