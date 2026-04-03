@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 02:03:34 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/03 11:57:05 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/03 12:12:28 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ void	handle_signal(int sig)
 		printf("\n");
 		rl_on_new_line();
 		rl_replace_line("", 0);
-		rl_redisplay();
 	}
 	else if (sig == SIGQUIT)
 		g_status = 0;
@@ -33,7 +32,10 @@ static void	lp_read_loop(t_minishell_data **data)
 
 	while (1)
 	{
-		line = readline("minishell> ");
+		if (isatty(STDIN_FILENO))
+			line = readline("minishell> ");
+		else
+			line = readline(NULL);
 		if (!line)
 		{
 			printf("exit\n");
