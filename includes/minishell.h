@@ -6,7 +6,7 @@
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 15:44:47 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/31 00:17:23 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/03 11:33:01 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ t_token_type	get_operator_type(t_data *data);
 t_token			*new_token(t_token_type type, char *value);
 void			add_token(t_token **head, t_token *new);
 t_token			*lexer(char *line, t_env_var *env_vars);
-void			free_tokens(t_token *tokens);
+void			free_tokens(t_token **tokens);
 void			print_tokens(t_token *tokens);
 char			*token_type_str(t_token_type type);
 t_command_ast	*parser(t_token *tokens);

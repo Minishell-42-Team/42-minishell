@@ -6,24 +6,25 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/10 10:51:57 by clwenhaj          #+#    #+#             */
-/*   Updated: 2026/03/25 22:33:27 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/03 11:34:27 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	free_tokens(t_token *tokens)
+void	free_tokens(t_token **tokens)
 {
 	t_token	*tmp;
 
-	while (tokens)
+	while (*tokens)
 	{
-		tmp = tokens;
-		tokens = tokens->next;
+		tmp = *tokens;
+		*tokens = (*tokens)->next;
 		if (tmp->value)
 			free(tmp->value);
 		free(tmp);
 	}
+	*tokens = NULL;
 }
 
 t_token_type	get_operator_type(t_data *data)
