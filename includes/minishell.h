@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 15:44:47 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/01 21:34:38 by clwenhaj         ###   ########.fr       */
+/*   Updated: 2026/04/03 11:34:11 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ t_token_type	get_operator_type(t_data *data);
 t_token			*new_token(t_token_type type, char *value);
 void			add_token(t_token **head, t_token *new);
 t_token			*lexer(char *line, t_env_var *env_vars);
-void			free_tokens(t_token *tokens);
+void			free_tokens(t_token **tokens);
 void			print_tokens(t_token *tokens);
 char			*token_type_str(t_token_type type);
 t_command_ast	*parser(t_token *tokens);
@@ -94,7 +94,6 @@ char			*expand_variable(const char *str,
 void			ft_free(void **nptr);
 int				affect_command_param(t_command_ast *command, t_token *token);
 void			ft_exit(t_minishell_data **data);
-void			run_command(t_command_ast *command, t_minishell_data **data);
 int				apply_redirections(t_redir_file *redir);
 int				handle_heredoc(const char *delimiter);
 //void			process_heredoc(t_command_ast *cmds);
