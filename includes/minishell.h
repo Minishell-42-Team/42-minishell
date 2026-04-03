@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 15:44:47 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/31 00:17:23 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/01 21:34:38 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ typedef struct s_redir_file
 	struct s_redir_file	*next;
 	t_token_type		type;
 	char				*file;
+	int					heredoc_fd;
 }	t_redir_file;
 
 typedef struct s_command_ast
@@ -96,6 +97,7 @@ void			ft_exit(t_minishell_data **data);
 void			run_command(t_command_ast *command, t_minishell_data **data);
 int				apply_redirections(t_redir_file *redir);
 int				handle_heredoc(const char *delimiter);
+//void			process_heredoc(t_command_ast *cmds);
 void			ft_free_table(char ***table, int len);
 void			fork_child_do(t_command_ast *command, t_minishell_data **data);
 void			fork_parent_do(int *fd_in, t_command_ast *command,
@@ -111,4 +113,5 @@ int				get_fdin(t_command_ast *cmd);
 int				get_fdout(t_command_ast *cmd);
 int				open_file(t_redir_file *redir);
 int				exec_builtin(t_command_ast *cmd, t_minishell_data **data);
+//int				ft_check_parent_builtin(t_command_ast *cmd);
 #endif

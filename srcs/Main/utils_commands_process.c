@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_commands_process.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 23:18:10 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/31 00:13:16 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/01 21:16:20 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,8 @@ static char	**get_args(t_command_ast *command, t_minishell_data **data,
 
 	access_link = get_link_to_file(command->command, (*data)->execdirs);
 	if (!access_link)
-		return (printf("Minishell: %s: command not found\n", command->command), NULL);
+		return (printf("Minishell: %s: command not found\n",
+				command->command), NULL);
 	i = 0;
 	*len = ft_lstsize(command->args);
 	args = (char **)malloc(sizeof(char *) * (*len + 2));
@@ -69,8 +70,8 @@ int	check_built_parent(t_command_ast *cmd, t_minishell_data **data)
 	int	stdout_save;
 
 	if (ft_strcmp(cmd->command, "export") != 0 && ft_strcmp(cmd->command,
-		"unset") != 0 && ft_strcmp(cmd->command, "exit") != 0
-			&& ft_strcmp(cmd->command, "cd") != 0)
+			"unset") != 0 && ft_strcmp(cmd->command, "exit") != 0
+		&& ft_strcmp(cmd->command, "cd") != 0)
 		return (0);
 	stdin_save = dup(STDIN_FILENO);
 	stdout_save = dup(STDOUT_FILENO);

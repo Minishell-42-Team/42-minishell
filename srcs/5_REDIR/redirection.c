@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 13:16:25 by clwenhaj          #+#    #+#             */
-/*   Updated: 2026/03/30 15:12:34 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/01 21:14:39 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	open_file(t_redir_file *redir)
 	else if (redir->type == REDIR_IN)
 		fd = open(redir->file, O_RDONLY);
 	else if (redir->type == HEREDOC)
-		fd = handle_heredoc(redir->file);
+		return (redir->heredoc_fd);
 	if (fd < 0)
 		perror(redir->file);
 	return (fd);
