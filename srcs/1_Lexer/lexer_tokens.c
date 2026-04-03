@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 15:54:24 by clwenhaj          #+#    #+#             */
-/*   Updated: 2026/03/25 22:36:11 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/03 11:39:25 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,9 @@ static char	*read_word_between_quotes(t_data *data, char quote)
 		else
 			buffer[buf_pos++] = data->line[data->pos++];
 	}
-	if (data->line[data->pos] == quote)
-		data->pos++;
-	buffer[buf_pos] = '\0';
+	if (data->line[data->pos] != quote)
+		return (printf("error: unclosed quote. \n"), NULL);
+	(buffer[buf_pos] = '\0', data->pos++);
 	return (ft_strdup(buffer));
 }
 
@@ -91,7 +91,7 @@ static char	*read_word(t_data *data)
 	return (ft_strdup(buffer));
 }
 
-static void	lexer_loop(t_data *data, t_token **tokens)
+static int	lexer_loop(t_data *data, t_token **tokens)
 {
 	char			*word;
 	t_token_type	type;
@@ -111,10 +111,12 @@ static void	lexer_loop(t_data *data, t_token **tokens)
 		else
 		{
 			word = read_word(data);
-			add_token(tokens, new_token(WORD, word));
-			free(word);
+			if (!word)
+				return (free_tokens(tokens), 0);
+			(add_token(tokens, new_token(WORD, word)), free(word));
 		}
 	}
+	return (1);
 }
 
 t_token	*lexer(char *line, t_env_var *env_vars)
@@ -126,6 +128,7 @@ t_token	*lexer(char *line, t_env_var *env_vars)
 	data.env_vars = env_vars;
 	tokens = NULL;
 	data.pos = 0;
-	lexer_loop(&data, &tokens);
+	if (!lexer_loop(&data, &tokens))
+		return (NULL);
 	return (tokens);
 }
