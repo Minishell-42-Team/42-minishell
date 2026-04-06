@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/13 16:37:39 by clwenhaj          #+#    #+#             */
-/*   Updated: 2026/03/19 12:38:47 by clwenhaj         ###   ########.fr       */
+/*   Updated: 2026/04/02 12:05:38 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,50 +50,3 @@ void	ft_echo(t_list *args)
 	if (flag_newline)
 		printf("\n");
 }
-
-/*
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-int main(void)
-{
-    char *test1[] = {"echo", "hello", NULL};
-    char *test2[] = {"echo", "-n", "hello", NULL};
-    char *test3[] = {"echo", "-nn", "hello", "world", NULL};
-    char *test4[] = {"echo", "-nhello", NULL};
-    char *test5[] = {"echo", "-n", "-n", "hello", NULL};
-    char *test6[] = {"echo", NULL};
-    char *test7[] = {"echo", "-n", NULL};
-
-    printf("Test 1: echo hello\nExpected: hello\\n\nOutput:   ");
-    ft_echo(test1);
-    printf("\n\n");
-
-    printf("Test 2: echo -n hello\nExpected: hello\nOutput:   ");
-    ft_echo(test2);
-    printf("\n\n");
-
-    printf("Test 3: echo -nn hello world\nExpected: hello world\nOutput:   ");
-    ft_echo(test3);
-    printf("\n\n");
-
-    printf("Test 4: echo -nhello\nExpected: -nhello\\n\nOutput:   ");
-    ft_echo(test4);
-    printf("\n\n");
-
-    printf("Test 5: echo -n -n hello\nExpected: hello\nOutput:   ");
-    ft_echo(test5);
-    printf("\n\n");
-	
-	printf("Test 6: echo\nExpected: \\n\nOutput:   ");
-    ft_echo(test6);
-    printf("\n\n");
-
-    printf("Test 7: echo -n\nExpected: (nothing)\nOutput:   ");
-    ft_echo(test7);
-    printf("\n\n");
-
-    return 0;
-
-}*/

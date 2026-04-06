@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 15:45:59 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/23 15:54:25 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/03 13:54:18 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,4 +39,12 @@ void	ft_free_table(char ***table, int len)
 	}
 	free(*table);
 	*table = NULL;
+}
+
+void	handle_fork_signal(int sig)
+{
+	if (sig == SIGINT)
+		printf("\n");
+	else if (sig == SIGQUIT)
+		printf("\n");
 }

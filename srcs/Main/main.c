@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 02:03:34 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/01 00:06:56 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/07 00:15:38 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ static void	lp_read_loop(t_minishell_data **data)
 		(*data)->cmds = parser((*data)->tokens);
 		execute_pipeline((*data)->cmds, data);
 		ft_free_command(&(*data)->cmds);
-		free_tokens((*data)->tokens);
+		free_tokens(&(*data)->tokens);
 		free(line);
 	}
 }

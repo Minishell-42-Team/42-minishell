@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/10 04:51:52 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/03 00:55:47 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/07 00:14:27 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ static int	ft_addredir(t_redir_file **head, t_token_type type, char *file)
 	else
 	{
 		node_tmp = *head;
-		while(node_tmp->next)
+		while (node_tmp->next)
 			node_tmp = node_tmp->next;
 		node_tmp->next = node;
 	}

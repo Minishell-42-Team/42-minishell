@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   commands_process.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/23 23:49:38 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/30 15:45:00 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/03 13:56:32 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,34 @@ static int	init_bf_execute(t_command_ast *cmds, t_command_ast **cmd,
 	return (i);
 }
 
+static int	prepare_heredoc(t_command_ast *cmds)
+{
+	t_command_ast	*cmd;
+	t_redir_file	*redir;
+
+	cmd = cmds;
+	while (cmd)
+	{
+		redir = cmd->redirs;
+		while (redir)
+		{
+			if (redir->type == HEREDOC)
+			{
+				redir->heredoc_fd = handle_heredoc(redir->file);
+				if (redir->heredoc_fd < 0)
+				{
+					g_status = 130;
+					close(redir->heredoc_fd);
+					return (0);
+				}
+			}
+			redir = redir->next;
+		}
+		cmd = cmd->next;
+	}
+	return (1);
+}
+
 void	execute_pipeline(t_command_ast *cmds, t_minishell_data **data)
 {
 	int				pipefd[2];
@@ -97,8 +125,9 @@ void	execute_pipeline(t_command_ast *cmds, t_minishell_data **data)
 	t_command_ast	*cmd;
 	int				i;
 
-	if (!cmds)
+	if (!cmds || !prepare_heredoc(cmds))
 		return ;
+	(signal(SIGINT, SIG_IGN), signal(SIGQUIT, SIG_IGN));
 	if (!cmds->next && check_built_parent(cmds, data))
 		return ;
 	if (init_bf_execute(cmds, &cmd, &pids, &fd_in) == -1)
@@ -110,13 +139,12 @@ void	execute_pipeline(t_command_ast *cmds, t_minishell_data **data)
 			return ;
 		pids[++i] = fork();
 		if (pids[i] == 0)
-		{
-			dup2_close(fd_in, cmd, pipefd[0], pipefd[1]);
-			fork_child_do(cmd, data);
-		}
+			(dup2_close(fd_in, cmd, pipefd[0], pipefd[1]),
+				fork_child_do(cmd, data));
 		else
 			fork_parent_do(&fd_in, cmd, pipefd[0], pipefd[1]);
 		cmd = cmd->next;
 	}
-	(ft_wait_child(cmds, pids), free(pids));
+	(ft_wait_child(cmds, pids), free(pids), signal(SIGINT, handle_signal),
+	 signal(SIGQUIT, handle_signal));
 }
