@@ -6,58 +6,57 @@
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/01 00:23:08 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/03 10:19:32 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/07 13:43:57 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include "minishell.h"
 
-static int	ft_matched(char *str_to_match, char *filename)
+static int	ft_matched(char *pattern, char *filename)
 {
-	if (!*str_to_match && !*filename)
+	if (!*pattern && !*filename)
 		return (1);
-	else if (*str_to_match == '*')
+	if (*pattern == '*')
 	{
-		if (!*filename)
+		if (ft_matched(pattern + 1, filename))
 			return (1);
-		if (!*(str_to_match + 1) && ft_matched(str_to_match, filename + 1))
+		if (*filename && ft_matched(pattern, filename + 1))
 			return (1);
-		if (ft_matched(str_to_match + 1, filename + 1))
-			return (1);
+		return (0);
 	}
-	else if (*str_to_match == *filename)
-		return (ft_matched(str_to_match + 1, filename + 1));
+	if (*filename && *pattern == *filename)
+		return (ft_matched(pattern + 1, filename + 1));
 	return (0);
 }
 
-static int	find_match(char *str_to_match, t_list **args)
+static int	find_match(char *str_to_match, t_list **args, char *dir_current)
 {
 	DIR				*dir;
 	struct dirent	*entry;
-	t_list			*new;
+	int				count;
 
-	dir = opendir(".");
+	dir = opendir(dir_current);
 	entry = readdir(dir);
+	count = 0;
 	if (!entry)
-		return (printf("no matched found.\n"), 0);
+		return (perror("readdir"), 0);
 	while (entry)
 	{
 		if (ft_matched(str_to_match, entry->d_name))
 		{
-			new = ft_lstnew(entry->d_name);
-			if (!new)
-				return (perror("malloc"), 0);
-			ft_lstadd_back(args, new);
+			if (!add_new_arg(args, entry->d_name))
+				return (closedir(dir), 0);
+			count++;
 		}
 		entry = readdir(dir);
 	}
-	return (closedir(dir), 1);
+	closedir(dir);
+	return (count != 0);
 }
 
 int	get_matched_args(t_command_ast *cmd)
 {
 	t_list	*arg;
-	t_list	*arg_to_free;
 	t_list	*args;
 
 	if (!cmd->args)
@@ -68,14 +67,13 @@ int	get_matched_args(t_command_ast *cmd)
 	{
 		if (ft_strchr((char *)arg->content, '*'))
 		{
-			if (!find_match((char *)arg->content, &args))
-				return (0);
-			else
-				(arg_to_free = arg, arg = arg->next,
-				 ft_free_arg(&cmd->args, &arg_to_free));
+			if (!find_match((char *)arg->content, &args, "."))
+				return (printf("no matched found: %s.\n", (char *)arg->content),
+						ft_lstclear(&args, free), 0);
 		}
 		else
-			(ft_lstadd_back(&args, arg), arg = arg->next);
+			add_new_arg(&args, (char *)arg->content);
+		arg = arg->next;
 	}
 	ft_lstclear(&cmd->args, free);
 	cmd->args = args;

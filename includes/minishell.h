@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 15:44:47 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/07 00:14:08 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/07 01:42:22 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,5 +116,6 @@ int				get_matched_args(t_command_ast *cmd);
 void			ft_free_arg(t_list **head, t_list **node_to_free);
 void			handle_fork_signal(int sig);
 void			handle_signal(int sig);
+int				add_new_arg(t_list **args, char *content);
 
 #endif
