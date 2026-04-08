@@ -6,7 +6,7 @@
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/01 00:23:08 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/07 13:43:57 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/08 01:53:38 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,53 +29,62 @@ static int	ft_matched(char *pattern, char *filename)
 	return (0);
 }
 
-static int	find_match(char *str_to_match, t_list **args, char *dir_current)
+static int	is_p_dir(char *path)
+{
+	return (ft_strcmp(path, "..") == 0 || ft_strcmp(path, ".") == 0);
+}
+
+static int	find_match(char *pattern, t_list **args, char *path, int *count)
 {
 	DIR				*dir;
 	struct dirent	*entry;
-	int				count;
+	char			*slash_pos;
+	int				len;
 
-	dir = opendir(dir_current);
-	entry = readdir(dir);
-	count = 0;
-	if (!entry)
-		return (perror("readdir"), 0);
+	(dir = opendir(path), entry = readdir(dir));
+	(slash_pos = ft_strchr(pattern, '/'), len = ft_strlen(path));
 	while (entry)
 	{
-		if (ft_matched(str_to_match, entry->d_name))
+		get_pathname(path, entry->d_name);
+		if (slash_pos && !is_p_dir(entry->d_name))
 		{
-			if (!add_new_arg(args, entry->d_name))
-				return (closedir(dir), 0);
-			count++;
+			*slash_pos = '\0';
+			if (is_dir(path) && ft_matched(pattern, entry->d_name))
+				if (!find_match(slash_pos + 1, args, path, count))
+					return (closedir(dir), 0);
+			*slash_pos = '/';
 		}
-		entry = readdir(dir);
+		else if (!slash_pos && ft_matched(pattern,	entry->d_name))
+			if (!is_p_dir(entry->d_name) && !add_new_arg(args, path + 2, count))
+				return (closedir(dir), 0);
+		(ft_bzero(path + len, 255 - len), entry = readdir(dir));
 	}
-	closedir(dir);
-	return (count != 0);
+	return (closedir(dir), 1);
 }
 
 int	get_matched_args(t_command_ast *cmd)
 {
 	t_list	*arg;
 	t_list	*args;
+	char	path[255];
+	int		count;
 
 	if (!cmd->args)
 		return (1);
-	arg = cmd->args;
-	args = NULL;
+	(arg = cmd->args, args = NULL, ft_bzero(path, 255), count = 0);
+	path[0] = '.';
 	while (arg)
 	{
 		if (ft_strchr((char *)arg->content, '*'))
 		{
-			if (!find_match((char *)arg->content, &args, "."))
+			if (!find_match((char *)arg->content, &args, path, &count)
+					|| count == 0)
 				return (printf("no matched found: %s.\n", (char *)arg->content),
 						ft_lstclear(&args, free), 0);
 		}
 		else
-			add_new_arg(&args, (char *)arg->content);
-		arg = arg->next;
+			add_new_arg(&args, (char *)arg->content, NULL);
+		(arg = arg->next, count = 0);
 	}
-	ft_lstclear(&cmd->args, free);
-	cmd->args = args;
-	return (1);
+	return (ft_lstclear(&cmd->args, free), cmd->args = args, 1);
 }

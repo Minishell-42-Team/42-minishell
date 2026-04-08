@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 15:44:47 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/07 01:42:22 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/08 01:17:02 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include <unistd.h>
 # include <signal.h>
 # include <sys/wait.h>
+# include <sys/stat.h>
 # include <fcntl.h>
 # define SIG_ERROR_MSG "Error : fail to catch a signal.\n"
 # include <string.h>
@@ -116,6 +117,8 @@ int				get_matched_args(t_command_ast *cmd);
 void			ft_free_arg(t_list **head, t_list **node_to_free);
 void			handle_fork_signal(int sig);
 void			handle_signal(int sig);
-int				add_new_arg(t_list **args, char *content);
+int				add_new_arg(t_list **args, char *content, int *count);
+int				is_dir(const char *path);
+void			get_pathname(char *path, const char *entry);
 
 #endif
