@@ -113,7 +113,13 @@ t_command_ast	*parser(t_token *tokens)
 		return (NULL);
 	cmds = get_commands(tokens);
 	if (!cmds)
-		return (printf("error: parsing fail.\n"), NULL);
+	{
+		if (tokens && tokens->type == PIPE)
+			ft_putstr_fd("Minishell: syntax error near unexpected token `|'\n", 2);
+		else
+			ft_putstr_fd("Minishell: syntax error near unexpected token `newline'\n", 2);
+		return (NULL);
+	}
 	node = cmds;
 	while (node)
 	{

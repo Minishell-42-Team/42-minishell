@@ -17,6 +17,8 @@
 # include <stdlib.h>
 # include "libft.h"
 
+extern int	g_status;
+
 typedef struct s_env_var
 {
 	char				*key;

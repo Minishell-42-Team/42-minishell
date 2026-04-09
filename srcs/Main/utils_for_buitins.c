@@ -22,6 +22,10 @@ static int	exec_simple_builtin(t_command_ast *cmd, t_minishell_data **data)
 		return (ft_pwd(), 1);
 	if (ft_strcmp(cmd->command, "exit") == 0)
 		return (ft_exit(data), 1);
+	if (ft_strcmp(cmd->command, ":") == 0)
+		return (g_status = 0, 1);
+	if (ft_strcmp(cmd->command, "!") == 0)
+		return (g_status = 1, 1);
 	return (0);
 }
 
@@ -81,6 +85,8 @@ static int	ft_cd_builtin(t_command_ast *cmd, t_minishell_data **data)
 
 int	exec_builtin(t_command_ast *cmd, t_minishell_data **data)
 {
+	if (!cmd || !cmd->command)
+		return (0);
 	if (exec_simple_builtin(cmd, data)
 		|| ft_export_builtin(cmd, data)
 		|| ft_unset_builtin(cmd, data)

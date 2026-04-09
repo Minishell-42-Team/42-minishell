@@ -97,7 +97,7 @@ void			ft_free(void **nptr);
 int				affect_command_param(t_command_ast *command, t_token *token);
 void			ft_exit(t_minishell_data **data);
 int				apply_redirections(t_redir_file *redir);
-int				handle_heredoc(const char *delimiter);
+int				handle_heredoc(const char *delimiter, t_env_var *envs);
 void			ft_free_table(char ***table, int len);
 void			fork_child_do(t_command_ast *command, t_minishell_data **data);
 void			fork_parent_do(int *fd_in, t_command_ast *command,

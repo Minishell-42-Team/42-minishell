@@ -45,6 +45,8 @@ static void	lp_read_loop(t_minishell_data **data)
 		add_history(line);
 		(*data)->tokens = lexer(line, (*data)->envs);
 		(*data)->cmds = parser((*data)->tokens);
+		if (!(*data)->cmds && (*data)->tokens)
+			g_status = 2;
 		execute_pipeline((*data)->cmds, data);
 		ft_free_command(&(*data)->cmds);
 		free_tokens(&(*data)->tokens);

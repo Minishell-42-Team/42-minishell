@@ -12,7 +12,37 @@
 
 #include "minishell.h"
 
-int	handle_heredoc(const char *delimiter)
+static char	*expand_line(char *line, t_env_var *envs)
+{
+	char	*new_line;
+	char	*tmp;
+	char	*var_val;
+	int		i;
+	int		j;
+
+	new_line = ft_strdup("");
+	i = 0;
+	while (line[i])
+	{
+		if (line[i] == '$' && line[i + 1] && (ft_isalnum(line[i + 1])
+				|| line[i + 1] == '_' || line[i + 1] == '?'))
+		{
+			j = i + 1;
+			var_val = expand_variable(line, &j, envs);
+			tmp = ft_strjoin(new_line, var_val);
+			(free(new_line), free(var_val), new_line = tmp, i = j);
+		}
+		else
+		{
+			tmp = ft_calloc(2, sizeof(char));
+			(tmp[0] = line[i], var_val = ft_strjoin(new_line, tmp));
+			(free(new_line), free(tmp), new_line = var_val, i++);
+		}
+	}
+	return (free(line), new_line);
+}
+
+int	handle_heredoc(const char *delimiter, t_env_var *envs)
 {
 	int		pipefd[2];
 	char	*line;
@@ -26,21 +56,22 @@ int	handle_heredoc(const char *delimiter)
 		return (perror("fork"), -1);
 	if (pid == 0)
 	{
-		signal(SIGINT, SIG_DFL);
-		signal(SIGQUIT, SIG_IGN);
+		(signal(SIGINT, SIG_DFL), signal(SIGQUIT, SIG_IGN));
 		close(pipefd[0]);
 		while (1)
 		{
 			line = readline("> ");
 			if (!line)
-				(printf("warning: heredoc ended by EOF\n"), close(pipefd[1]),
-						exit(0));
+			{
+				ft_putstr_fd("Minishell: warning: heredoc delimited by EOF\n", 2);
+				(close(pipefd[1]), exit(0));
+			}
 			if (ft_strcmp(line, delimiter) == 0)
 				(free(line), close(pipefd[1]), exit(0));
+			line = expand_line(line, envs);
 			(write(pipefd[1], line, ft_strlen(line)),
 				write(pipefd[1], "\n", 1), free(line));
 		}
-		(close(pipefd[1]), exit(0));
 	}
 	else
 	{

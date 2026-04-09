@@ -69,6 +69,8 @@ int	check_built_parent(t_command_ast *cmd, t_minishell_data **data)
 	int	stdin_save;
 	int	stdout_save;
 
+	if (!cmd->command)
+		return (0);
 	if (ft_strcmp(cmd->command, "export") != 0 && ft_strcmp(cmd->command,
 			"unset") != 0 && ft_strcmp(cmd->command, "exit") != 0
 		&& ft_strcmp(cmd->command, "cd") != 0)
@@ -97,9 +99,11 @@ void	fork_child_do(t_command_ast *command, t_minishell_data **data)
 	char	**envp;
 	int		len;
 
-	(signal(SIGINT, handle_fork_signal), signal(SIGQUIT, handle_fork_signal));
+	(signal(SIGINT, SIG_DFL), signal(SIGQUIT, SIG_DFL));
 	if (!apply_redirections(command->redirs))
 		exit(EXIT_FAILURE);
+	if (!command->command)
+		exit(EXIT_SUCCESS);
 	if (exec_builtin(command, data))
 		exit(g_status);
 	args = get_args(command, data, &len);

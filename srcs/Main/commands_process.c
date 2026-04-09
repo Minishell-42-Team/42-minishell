@@ -53,7 +53,13 @@ static void	ft_wait_child(t_command_ast *cmd, pid_t *pids)
 			if (WIFEXITED(status))
 				g_status = WEXITSTATUS(status);
 			else if (WIFSIGNALED(status))
+			{
 				g_status = 128 + WTERMSIG(status);
+				if (g_status == 131)
+					ft_putstr_fd("Quit (core dumped)\n", 2);
+				else if (g_status == 130)
+					ft_putstr_fd("\n", 2);
+			}
 		}
 		node = node->next;
 	}
@@ -73,8 +79,10 @@ static int	init_bf_execute(t_command_ast *cmds, t_command_ast **cmd,
 	{
 		if (cmds->next)
 			i++;
-		else if (!ft_check_builtin_must_not_fork(node->command)
+		else if (node->command && !ft_check_builtin_must_not_fork(node->command)
 			&& ft_strcmp(node->command, "cd") != 0)
+			i++;
+		else if (!node->command)
 			i++;
 		node = node->next;
 	}
@@ -89,7 +97,7 @@ static int	init_bf_execute(t_command_ast *cmds, t_command_ast **cmd,
 	return (i);
 }
 
-static int	prepare_heredoc(t_command_ast *cmds)
+static int	prepare_heredoc(t_command_ast *cmds, t_env_var *envs)
 {
 	t_command_ast	*cmd;
 	t_redir_file	*redir;
@@ -102,7 +110,7 @@ static int	prepare_heredoc(t_command_ast *cmds)
 		{
 			if (redir->type == HEREDOC)
 			{
-				redir->heredoc_fd = handle_heredoc(redir->file);
+				redir->heredoc_fd = handle_heredoc(redir->file, envs);
 				if (redir->heredoc_fd < 0)
 				{
 					g_status = 130;
@@ -125,7 +133,7 @@ void	execute_pipeline(t_command_ast *cmds, t_minishell_data **data)
 	t_command_ast	*cmd;
 	int				i;
 
-	if (!cmds || !prepare_heredoc(cmds))
+	if (!cmds || !prepare_heredoc(cmds, (*data)->envs))
 		return ;
 	(signal(SIGINT, SIG_IGN), signal(SIGQUIT, SIG_IGN));
 	if (!cmds->next && check_built_parent(cmds, data))
