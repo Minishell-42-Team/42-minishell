@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 15:44:47 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/08 01:17:02 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/10 15:58:07 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,11 @@ typedef enum e_token_type
 	REDIR_OUT,
 	APPEND,
 	HEREDOC,
+	SEMICOLON,
+	AND,
+	AND_IF,
+	OR_IF,
+	NOT,
 }	t_token_type;
 
 typedef struct s_token
@@ -83,6 +88,9 @@ t_token_type	get_operator_type(t_data *data);
 t_token			*new_token(t_token_type type, char *value);
 void			add_token(t_token **head, t_token *new);
 t_token			*lexer(char *line, t_env_var *env_vars);
+void			expander_tokens(t_token *tokens, t_env_var *envs);
+char			*remove_quotes(char *str);
+void			clean_quotes_command(t_command_ast *cmd);
 void			free_tokens(t_token **tokens);
 void			print_tokens(t_token *tokens);
 char			*token_type_str(t_token_type type);
@@ -95,7 +103,8 @@ char			*expand_variable(const char *str,
 					int *pos, t_env_var *env_vars);
 void			ft_free(void **nptr);
 int				affect_command_param(t_command_ast *command, t_token *token);
-void			ft_exit(t_minishell_data **data);
+int			ft_exit(t_command_ast *command, t_minishell_data **data,
+					int status);
 int				apply_redirections(t_redir_file *redir);
 int				handle_heredoc(const char *delimiter, t_env_var *envs);
 void			ft_free_table(char ***table, int len);

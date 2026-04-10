@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/23 23:49:38 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/03 13:56:32 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/10 15:37:55 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,7 @@ static void	ft_wait_child(t_command_ast *cmd, pid_t *pids)
 	int				status;
 	int				i;
 
-	node = cmd;
-	i = 0;
+	(node = cmd, i = 0);
 	if (!pids)
 		return ;
 	while (node)
@@ -71,10 +70,7 @@ static int	init_bf_execute(t_command_ast *cmds, t_command_ast **cmd,
 	t_command_ast	*node;
 	int				i;
 
-	node = cmds;
-	*cmd = cmds;
-	*fd_in = STDIN_FILENO;
-	i = 0;
+	(node = cmds, *cmd = cmds, *fd_in = STDIN_FILENO, i = 0);
 	while (node)
 	{
 		if (cmds->next)
@@ -87,10 +83,7 @@ static int	init_bf_execute(t_command_ast *cmds, t_command_ast **cmd,
 		node = node->next;
 	}
 	if (i == 0)
-	{
-		*pids = NULL;
-		return (0);
-	}
+		return (*pids = NULL, 0);
 	*pids = (pid_t *)malloc(sizeof(pid_t) * i);
 	if (!*pids)
 		return (-1);
@@ -112,11 +105,7 @@ static int	prepare_heredoc(t_command_ast *cmds, t_env_var *envs)
 			{
 				redir->heredoc_fd = handle_heredoc(redir->file, envs);
 				if (redir->heredoc_fd < 0)
-				{
-					g_status = 130;
-					close(redir->heredoc_fd);
-					return (0);
-				}
+					return (g_status = 130, close(redir->heredoc_fd), 0);
 			}
 			redir = redir->next;
 		}

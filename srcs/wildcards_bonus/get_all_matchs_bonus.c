@@ -62,6 +62,20 @@ static int	find_match(char *pattern, t_list **args, char *path, int *count)
 	return (closedir(dir), 1);
 }
 
+static int	has_quotes(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == '\'' || str[i] == '"')
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
 int	get_matched_args(t_command_ast *cmd)
 {
 	t_list	*arg;
@@ -75,12 +89,13 @@ int	get_matched_args(t_command_ast *cmd)
 	path[0] = '.';
 	while (arg)
 	{
-		if (ft_strchr((char *)arg->content, '*'))
+		if (ft_strchr((char *)arg->content, '*')
+			&& !has_quotes((char *)arg->content))
 		{
-			if (!find_match((char *)arg->content, &args, path, &count)
-					|| count == 0)
-				return (printf("no matched found: %s.\n", (char *)arg->content),
-						ft_lstclear(&args, free), 0);
+			if (!find_match((char *)arg->content, &args, path, &count))
+				return (ft_lstclear(&args, free), 0);
+			if (count == 0)
+				add_new_arg(&args, (char *)arg->content, NULL);
 		}
 		else
 			add_new_arg(&args, (char *)arg->content, NULL);

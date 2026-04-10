@@ -12,80 +12,29 @@
 
 #include "minishell.h"
 
-static char	*read_word_between_quotes(t_data *data, char quote)
-{
-	char	buffer[1024];
-	char	*tmp;
-	int		buf_pos;
-
-	buf_pos = 0;
-	data->pos++;
-	while (data->line[data->pos] && data->line[data->pos] != quote
-		&& buf_pos < 1023)
-	{
-		if (quote == '"' && data->line[data->pos] == '$')
-		{
-			data->pos++;
-			tmp = expand_variable(data->line, &data->pos, data->env_vars);
-			if (!tmp)
-				return (NULL);
-			buf_pos += ft_strlcpy(buffer + buf_pos, tmp, 1024 - buf_pos);
-			free(tmp);
-		}
-		else
-			buffer[buf_pos++] = data->line[data->pos++];
-	}
-	if (data->line[data->pos] != quote)
-		return (printf("error : unclosed quote.\n"), NULL);
-	(buffer[buf_pos] = '\0', data->pos++);
-	return (ft_strdup(buffer));
-}
-
-static char	*read_normal_word(t_data *data)
-{
-	char	buffer[1024];
-	int		buf_pos;
-	char	*tmp;
-
-	buf_pos = 0;
-	while (data->line[data->pos] && !ft_isspace(data->line[data->pos])
-		&& !is_quote(data->line[data->pos])
-		&& !is_operator(data->line[data->pos]))
-	{
-		if (data->line[data->pos] == '$')
-		{
-			data->pos++;
-			tmp = expand_variable(data->line, &data->pos, data->env_vars);
-			if (!tmp)
-				return (NULL);
-			buf_pos += ft_strlcpy(buffer + buf_pos, tmp, 1024 - buf_pos);
-			free(tmp);
-		}
-		else
-			buffer[buf_pos++] = data->line[data->pos++];
-	}
-	buffer[buf_pos] = '\0';
-	return (ft_strdup(buffer));
-}
-
 static char	*read_word(t_data *data)
 {
 	char	buffer[1024];
-	char	*tmp;
 	int		buf_pos;
+	char	quote;
 
 	buf_pos = 0;
 	while (data->line[data->pos] && !ft_isspace(data->line[data->pos])
 		&& !is_operator(data->line[data->pos]))
 	{
 		if (is_quote(data->line[data->pos]))
-			tmp = read_word_between_quotes(data, data->line[data->pos]);
+		{
+			quote = data->line[data->pos];
+			buffer[buf_pos++] = data->line[data->pos++];
+			while (data->line[data->pos] && data->line[data->pos] != quote)
+				buffer[buf_pos++] = data->line[data->pos++];
+			if (data->line[data->pos] == quote)
+				buffer[buf_pos++] = data->line[data->pos++];
+			else
+				return (ft_putstr_fd("Minishell: unclosed quote\n", 2), NULL);
+		}
 		else
-			tmp = read_normal_word(data);
-		if (!tmp)
-			return (NULL);
-		buf_pos += ft_strlcpy(buffer + buf_pos, tmp, 1024 - buf_pos);
-		free(tmp);
+			buffer[buf_pos++] = data->line[data->pos++];
 	}
 	buffer[buf_pos] = '\0';
 	return (ft_strdup(buffer));
@@ -106,7 +55,10 @@ static int	lexer_loop(t_data *data, t_token **tokens)
 		if (type != WORD)
 		{
 			add_token(tokens, new_token(type, NULL));
-			data->pos++;
+			if (type == APPEND || type == HEREDOC)
+				data->pos += 2;
+			else
+				data->pos++;
 		}
 		else
 		{

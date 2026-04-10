@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 02:03:34 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/07 00:15:38 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/10 13:44:38 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ static void	lp_read_loop(t_minishell_data **data)
 		}
 		add_history(line);
 		(*data)->tokens = lexer(line, (*data)->envs);
+		expander_tokens((*data)->tokens, (*data)->envs);
 		(*data)->cmds = parser((*data)->tokens);
 		if (!(*data)->cmds && (*data)->tokens)
 			g_status = 2;
@@ -66,9 +67,7 @@ int	main(int argc, char **argv, char **envp)
 	data = (t_minishell_data *)malloc(sizeof(t_minishell_data));
 	if (!data)
 		return (EXIT_FAILURE);
-	data->envs = NULL;
-	data->execdirs = NULL;
-	data->tokens = NULL;
+	(data->envs = NULL, data->execdirs = NULL, data->tokens = NULL);
 	data->cmds = NULL;
 	i = -1;
 	while (envp[++i])
