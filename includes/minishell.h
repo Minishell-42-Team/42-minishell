@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 15:44:47 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/10 15:58:07 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/10 16:15:47 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,8 +103,7 @@ char			*expand_variable(const char *str,
 					int *pos, t_env_var *env_vars);
 void			ft_free(void **nptr);
 int				affect_command_param(t_command_ast *command, t_token *token);
-int			ft_exit(t_command_ast *command, t_minishell_data **data,
-					int status);
+void			ft_exit(t_minishell_data **data);
 int				apply_redirections(t_redir_file *redir);
 int				handle_heredoc(const char *delimiter, t_env_var *envs);
 void			ft_free_table(char ***table, int len);

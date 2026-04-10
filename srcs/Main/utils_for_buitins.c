@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/30 13:59:37 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/10 16:10:51 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/10 16:15:20 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static int	exec_simple_builtin(t_command_ast *cmd, t_minishell_data **data)
 	if (ft_strcmp(cmd->command, "pwd") == 0)
 		return (ft_pwd(), 1);
 	if (ft_strcmp(cmd->command, "exit") == 0)
-		return (ft_exit(cmd, data, 0), 1);
+		return (ft_exit(data), 1);
 	if (ft_strcmp(cmd->command, ":") == 0)
 		return (g_status = 0, 1);
 	if (ft_strcmp(cmd->command, "!") == 0)
