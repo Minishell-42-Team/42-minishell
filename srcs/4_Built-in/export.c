@@ -12,6 +12,30 @@
 
 #include "builtin.h"
 
+static int	is_valid_identifier(char *str)
+{
+	int	i;
+
+	if (!str || (!ft_isalpha(str[0]) && str[0] != '_'))
+		return (0);
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == '=')
+			break ;
+		if (!ft_isalnum(str[i]) && str[i] != '_')
+			return (0);
+		i++;
+	}
+	while (str[i])
+	{
+		if (str[i] == '!')
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
 static int	find_pos_equal(char *arg)
 {
 	int	i;
@@ -19,9 +43,7 @@ static int	find_pos_equal(char *arg)
 	i = 0;
 	while (arg[i] && arg[i] != '=')
 		i++;
-	if (i != 0)
-		return (i);
-	return (-1);
+	return (i);
 }
 
 static int	set_dir(char *dir, t_list **execdirs)
@@ -75,20 +97,24 @@ void	*ft_export(char *args, t_env_var **env_vars, t_list **execdirs)
 
 	if (!args)
 		return (print_env_vars(*env_vars), NULL);
+	if (!is_valid_identifier(args))
+	{
+		ft_putstr_fd("Minishell: export: `", 2);
+		ft_putstr_fd(args, 2);
+		ft_putstr_fd("': not a valid identifier\n", 2);
+		g_status = 1;
+		return (NULL);
+	}
 	items = ft_strdup(args);
 	if (!items)
-		return (perror("error: An allocation fail."), NULL);
+		return (NULL);
 	pos = find_pos_equal(items);
-	if (pos == -1)
-	{
-		perror("error: bad assignment.");
-		return (free(items), NULL);
-	}
 	if (!items[pos])
 		return (add_env_var(env_vars, items, NULL), free(items), NULL);
 	items[pos] = '\0';
 	if (ft_strcmp(items, "PATH") == 0)
 		get_execdirs(items + pos + 1, execdirs);
 	add_env_var(env_vars, items, items + pos + 1);
+	g_status = 0;
 	return (free(items), NULL);
 }
