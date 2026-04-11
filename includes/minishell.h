@@ -103,7 +103,7 @@ char			*expand_variable(const char *str,
 					int *pos, t_env_var *env_vars);
 void			ft_free(void **nptr);
 int				affect_command_param(t_command_ast *command, t_token *token);
-void			ft_exit(t_minishell_data **data);
+int			ft_exit(t_command_ast *cmd, t_minishell_data **data);
 int				apply_redirections(t_redir_file *redir);
 int				handle_heredoc(const char *delimiter, t_env_var *envs);
 void			ft_free_table(char ***table, int len);

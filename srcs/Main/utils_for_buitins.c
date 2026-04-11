@@ -21,7 +21,7 @@ static int	exec_simple_builtin(t_command_ast *cmd, t_minishell_data **data)
 	if (ft_strcmp(cmd->command, "pwd") == 0)
 		return (ft_pwd(), 1);
 	if (ft_strcmp(cmd->command, "exit") == 0)
-		return (ft_exit(data), 1);
+		return (ft_exit(cmd, data), 1);
 	if (ft_strcmp(cmd->command, ":") == 0)
 		return (g_status = 0, 1);
 	if (ft_strcmp(cmd->command, "!") == 0)
