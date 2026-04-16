@@ -49,4 +49,5 @@ void	ft_echo(t_list *args)
 	}
 	if (flag_newline)
 		printf("\n");
+	g_status = 0;
 }

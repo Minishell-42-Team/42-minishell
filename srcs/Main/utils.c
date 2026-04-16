@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 15:45:59 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/03 13:54:18 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/13 16:31:46 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void	ft_free_table(char ***table, int len)
 	if (!table || !*table)
 		return ;
 	i = 0;
-	while (i <= len)
+	while (i < len)
 	{
 		if ((*table)[i])
 			free((*table)[i]);

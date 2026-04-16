@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/10 09:33:54 by clwenhaj          #+#    #+#             */
-/*   Updated: 2026/04/08 02:15:00 by clwenhaj         ###   ########.fr       */
+/*   Updated: 2026/04/13 15:35:09 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,12 @@ static char	*ft_join_free(char *s1, char *s2)
 {
 	char	*res;
 
-	if (!s1 || !s2)
+	if (!s1 && !s2)
 		return (NULL);
+	if (!s1)
+		return (s2);
+	if (!s2)
+		return (s1);
 	res = ft_strjoin(s1, s2);
 	(free(s1), free(s2));
 	return (res);
@@ -64,7 +68,7 @@ char	*expand_variable(const char *str, int *pos, t_env_var *env_vars)
 	return (get_env_val(key, env_vars));
 }
 
-static char	*handle_expansion(char *str, t_env_var *envs)
+/*static char	*handle_expansion(char *str, t_env_var *envs)
 {
 	char	*new_str;
 	int		i;
@@ -92,22 +96,67 @@ static char	*handle_expansion(char *str, t_env_var *envs)
 			new_str = ft_join_free(new_str, ft_substr(str, i++, 1));
 	}
 	return (new_str);
+}*/
+
+static char	*handle_expansion(char *str, t_env_var *envs)
+{
+	char	*new_str;
+	int		i;
+	int		j;
+	int		k;
+	char	quote;
+
+	(new_str = ft_strdup(""), i = 0, quote = 0);
+	while (str && str[i])
+	{
+		if (is_quote(str[i]) && (quote == 0 || quote == str[i]))
+		{
+			if (quote == 0)
+				quote = str[i];
+			else
+				quote = 0;
+			i++;
+			continue ;
+		}
+		if (str[i] == '$' && quote != '\'')
+		{
+			k = i + 1;
+			while (str[k] == '"' || str[k] == '\'')
+				k++;
+
+			if (str[k] && (ft_isalnum(str[k]) || str[k] == '_' || str[k] == '?'))
+			{
+				j = k;
+				new_str = ft_join_free(new_str,
+						expand_variable(str, &j, envs));
+				i = j;
+				continue ;
+			}
+		}
+		new_str = ft_join_free(new_str, ft_substr(str, i, 1));
+		i++;
+	}
+	return (new_str);
 }
 
 void	expander_tokens(t_token *tokens, t_env_var *envs)
 {
 	t_token	*curr;
+	t_token	*prev;
 	char	*expanded;
 
 	curr = tokens;
+	prev = NULL;
 	while (curr)
 	{
-		if (curr->type == WORD && curr->value)
+		if (curr->type == WORD && curr->value
+			&& (!prev || prev->type != HEREDOC))
 		{
 			expanded = handle_expansion(curr->value, envs);
 			free(curr->value);
 			curr->value = expanded;
 		}
+		prev = curr;
 		curr = curr->next;
 	}
 }

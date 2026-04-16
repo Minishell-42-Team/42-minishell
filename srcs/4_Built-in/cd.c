@@ -12,9 +12,10 @@
 
 #include "builtin.h"
 
-void	update_env(t_env_var *env, char *key, char *value)
+t_env_var	*update_env(t_env_var *env, char *key, char *value)
 {
 	t_env_var	*tmp;
+	t_env_var	*new;
 
 	tmp = env;
 	while (tmp)
@@ -23,48 +24,61 @@ void	update_env(t_env_var *env, char *key, char *value)
 		{
 			free(tmp->value);
 			tmp->value = ft_strdup(value);
-			return ;
+			return (env);
 		}
 		tmp = tmp->next;
 	}
-}
-
-static void	update_cd_env(t_env_var *envp, char *oldpwd)
-{
-	char	*pwd;
-
-	pwd = getcwd(NULL, 0);
-	if (!pwd)
-		perror("getcwd");
-	else
-	{
-		update_env(envp, "OLDPWD", oldpwd);
-		update_env(envp, "PWD", pwd);
-		free(pwd);
-	}
+	new = malloc(sizeof(t_env_var));
+	if (!new)
+		return (env);
+	new->key = ft_strdup(key);
+	new->value = ft_strdup(value);
+	new->next = env;
+	return (new);
 }
 
 void	ft_cd(char *args, t_env_var *envp)
 {
 	char	*oldpwd;
+	char	*pwd;
+	char	*home;
 
+	home = NULL;
 	if (!args)
 	{
-		printf("cd: missing arguments\n");
-		return ;
+		home = getenv("HOME");
+		if (!home)
+		{
+			g_status = 1;
+			return ;
+		}
+		args = home;
 	}
 	oldpwd = getcwd(NULL, 0);
 	if (!oldpwd)
 	{
 		perror("getcwd");
+		g_status = 1;
 		return ;
 	}
 	if (chdir(args) != 0)
 	{
 		perror("cd");
 		free(oldpwd);
+		g_status = 1;
 		return ;
 	}
-	update_cd_env(envp, oldpwd);
+	pwd = getcwd(NULL, 0);
+	if (!pwd)
+	{
+		perror("getcwd");
+		free(oldpwd);
+		g_status = 1;
+		return ;
+	}
+	envp = update_env(envp, "PWD", pwd);
+	envp = update_env(envp, "OLDPWD", oldpwd);
 	free(oldpwd);
+	free(pwd);
+	g_status = 0;
 }

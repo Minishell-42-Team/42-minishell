@@ -6,42 +6,11 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/08 02:00:00 by clwenhaj          #+#    #+#             */
-/*   Updated: 2026/04/08 02:00:00 by clwenhaj         ###   ########.fr       */
+/*   Updated: 2026/04/13 15:13:06 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-char	*remove_quotes(char *str)
-{
-	char	*new_str;
-	int		i;
-	int		j;
-	char	quote;
-
-	if (!str)
-		return (NULL);
-	new_str = malloc(sizeof(char) * (ft_strlen(str) + 1));
-	if (!new_str)
-		return (NULL);
-	i = 0;
-	j = 0;
-	quote = 0;
-	while (str[i])
-	{
-		if (is_quote(str[i]) && quote == 0)
-			quote = str[i++];
-		else if (is_quote(str[i]) && quote == str[i])
-		{
-			quote = 0;
-			i++;
-		}
-		else
-			new_str[j++] = str[i++];
-	}
-	new_str[j] = '\0';
-	return (new_str);
-}
 
 void	clean_quotes_command(t_command_ast *cmd)
 {
