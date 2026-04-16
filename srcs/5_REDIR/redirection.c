@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 13:16:25 by clwenhaj          #+#    #+#             */
-/*   Updated: 2026/04/01 21:14:39 by clwenhaj         ###   ########.fr       */
+/*   Updated: 2026/04/13 15:28:50 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,8 @@ int	apply_redirections(t_redir_file *redirs)
 			dup2(fd, STDOUT_FILENO);
 		else
 			dup2(fd, STDIN_FILENO);
+		if (redirs->type == HEREDOC)
+			redirs->heredoc_fd = -1;
 		close(fd);
 		redirs = redirs->next;
 	}

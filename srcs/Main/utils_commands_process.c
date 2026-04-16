@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 23:18:10 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/03 13:53:39 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/13 16:29:31 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,12 @@ static char	*get_link_to_file(char *command, t_list *execdirs)
 	t_list	*node;
 	int		len;
 
+	if (ft_strchr(command, '/'))
+	{
+		if (access(command, X_OK) == 0)
+			return (ft_strdup(command));
+		return (NULL);
+	}
 	node = execdirs;
 	while (node)
 	{
@@ -57,8 +63,11 @@ static char	**get_args(t_command_ast *command, t_minishell_data **data,
 	node = command->args;
 	while (node)
 	{
-		args[++i] = (char *)node->content;
+		args[i + 1] = ft_strdup((char *)node->content);
+		if (!args[i + 1])
+			return (ft_free_table(&args, i + 1), NULL);
 		node = node->next;
+		i++;
 	}
 	args[i + 1] = NULL;
 	return (args);
@@ -68,6 +77,7 @@ int	check_built_parent(t_command_ast *cmd, t_minishell_data **data)
 {
 	int	stdin_save;
 	int	stdout_save;
+	int	ret;
 
 	if (!cmd->command)
 		return (0);
@@ -75,6 +85,8 @@ int	check_built_parent(t_command_ast *cmd, t_minishell_data **data)
 			"unset") != 0 && ft_strcmp(cmd->command, "exit") != 0
 		&& ft_strcmp(cmd->command, "cd") != 0)
 		return (0);
+	if (ft_strcmp(cmd->command, "exit") == 0)
+		exec_builtin(cmd, data);
 	stdin_save = dup(STDIN_FILENO);
 	stdout_save = dup(STDOUT_FILENO);
 	if (!apply_redirections(cmd->redirs))
@@ -86,11 +98,13 @@ int	check_built_parent(t_command_ast *cmd, t_minishell_data **data)
 		return (1);
 	}
 	clean_quotes_command(cmd);
-	exec_builtin(cmd, data);
+	ret = exec_builtin(cmd, data);
 	dup2(stdin_save, STDIN_FILENO);
 	dup2(stdout_save, STDOUT_FILENO);
 	close(stdin_save);
 	close(stdout_save);
+	if (ret == 2)
+		ft_exit(cmd, data);
 	return (1);
 }
 
@@ -113,7 +127,12 @@ void	fork_child_do(t_command_ast *command, t_minishell_data **data)
 		exit(127);
 	envp = env_to_array((*data)->envs);
 	if (execve(args[0], args, envp) == -1)
+	{
 		perror("execve");
+		ft_free_table(&args, len);
+		ft_free_table(&envp, ft_lstsize((t_list *)(*data)->envs));
+		exit(127);
+	}
 	ft_free_table(&args, len);
 	ft_free_table(&envp, ft_lstsize((t_list *)(*data)->envs));
 	exit(EXIT_FAILURE);
@@ -126,7 +145,13 @@ void	fork_parent_do(int *fd_in, t_command_ast *command, int pipefd_in,
 		close(*fd_in);
 	if (command->next)
 	{
-		close(pipefd_out);
+		if (pipefd_out != -1)
+			close(pipefd_out);
 		*fd_in = pipefd_in;
+	}
+	else
+	{
+		if (pipefd_in != -1)
+			close(pipefd_in);
 	}
 }

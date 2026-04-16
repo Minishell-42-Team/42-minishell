@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_all_matchs_bonus.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/01 00:23:08 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/08 01:53:38 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/13 15:37:39 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ static int	find_match(char *pattern, t_list **args, char *path, int *count)
 	return (closedir(dir), 1);
 }
 
-static int	has_quotes(char *str)
+int	has_quotes(char *str)
 {
 	int	i;
 

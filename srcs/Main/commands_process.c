@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/23 23:49:38 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/10 15:37:55 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/13 16:18:40 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,27 @@ static void	dup2_close(int fd_in, t_command_ast *cmd, int pipfd_in,
 {
 	if (fd_in != STDIN_FILENO)
 	{
-		dup2(fd_in, STDIN_FILENO);
+		if (dup2(fd_in, STDIN_FILENO) == -1)
+			perror("dup2");
 		close(fd_in);
 	}
 	if (cmd->next)
 	{
-		close(pipfd_in);
-		dup2(pipfd_out, STDOUT_FILENO);
-		close(pipfd_out);
+		if (pipfd_in != -1)
+			close(pipfd_in);
+		if (pipfd_out != -1)
+		{
+			if (dup2(pipfd_out, STDOUT_FILENO) == -1)
+				perror("dup2");
+			close(pipfd_out);
+		}
+	}
+	else
+	{
+		if (pipfd_in != -1)
+			close(pipfd_in);
+		if (pipfd_out != -1)
+			close(pipfd_out);
 	}
 }
 
@@ -103,9 +116,9 @@ static int	prepare_heredoc(t_command_ast *cmds, t_env_var *envs)
 		{
 			if (redir->type == HEREDOC)
 			{
-				redir->heredoc_fd = handle_heredoc(redir->file, envs);
+				redir->heredoc_fd = handle_heredoc(redir->file, redir->quoted, envs);
 				if (redir->heredoc_fd < 0)
-					return (g_status = 130, close(redir->heredoc_fd), 0);
+					return (g_status = 130, 0);
 			}
 			redir = redir->next;
 		}
@@ -130,11 +143,31 @@ void	execute_pipeline(t_command_ast *cmds, t_minishell_data **data)
 	if (init_bf_execute(cmds, &cmd, &pids, &fd_in) == -1)
 		return ;
 	i = -1;
+	fd_in = STDIN_FILENO;
 	while (cmd)
 	{
+		pipefd[0] = -1;
+		pipefd[1] = -1;
 		if (cmd->next && !set_pipe(pipefd))
+		{
+			if (fd_in != STDIN_FILENO)
+				close(fd_in);
+			free(pids);
 			return ;
+		}
 		pids[++i] = fork();
+		if (pids[i] < 0)
+		{
+			if (cmd->next)
+			{
+				close(pipefd[0]);
+				close(pipefd[1]);
+			}
+			if (fd_in != STDIN_FILENO)
+				close(fd_in);
+			free(pids);
+			return ;
+		}
 		if (pids[i] == 0)
 			(dup2_close(fd_in, cmd, pipefd[0], pipefd[1]),
 				fork_child_do(cmd, data));

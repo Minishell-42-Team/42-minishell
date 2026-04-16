@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 02:03:34 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/03 11:56:41 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/16 15:15:19 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int	ft_exit(t_command_ast *cmd, t_minishell_data **data)
 	if (cmd->args && ft_is_onlydigit((char *)cmd->args->content) != 1)
 		return (ft_putstr_fd("exit: non numeric arguments.\n", 2), g_status = 1, 0);
 	if (cmd->args)
-		g_status = ft_atoi((char *)cmd->args->content) % 250;
+		g_status = ft_atoi((char *)cmd->args->content) % 255;
 	ft_free_command(&(*data)->cmds);
 	free_tokens(&(*data)->tokens);
 	ft_free_envs(&(*data)->envs);

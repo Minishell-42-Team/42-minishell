@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/10 06:22:02 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/01 14:42:08 by clwenhaj         ###   ########.fr       */
+/*   Updated: 2026/04/13 15:44:21 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,9 @@ static void	ft_clear_redir(t_redir_file **head)
 	{
 		redir_to_free = current_redir;
 		current_redir = current_redir->next;
-		if (redir_to_free->file)
-			free(redir_to_free->file);
+		if (redir_to_free->type == HEREDOC && redir_to_free->heredoc_fd > 0)
+			close(redir_to_free->heredoc_fd);
+		free(redir_to_free->file);
 		free(redir_to_free);
 	}
 	*head = NULL;
@@ -83,4 +84,32 @@ void	ft_free_command(t_command_ast **command)
 		free(command_to_free);
 	}
 	*command = NULL;
+}
+
+char	*remove_quotes(char *str)
+{
+	char	*res;
+	int		i = 0;
+	int		j = 0;
+	char	quote = 0;
+
+	if (!str)
+		return (NULL);
+	res = malloc(ft_strlen(str) + 1);
+	if (!res)
+		return (NULL);
+	while (str[i])
+	{
+		if ((str[i] == '\'' || str[i] == '"') && quote == 0)
+			quote = str[i++];
+		else if (str[i] == quote)
+		{
+			quote = 0;
+			i++;
+		}
+		else
+			res[j++] = str[i++];
+	}
+	res[j] = '\0';
+	return (res);
 }

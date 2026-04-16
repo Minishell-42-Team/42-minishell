@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/10 04:51:52 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/07 00:14:27 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/13 11:30:08 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,17 @@ static int	ft_addredir(t_redir_file **head, t_token_type type, char *file)
 		return (0);
 	node->next = NULL;
 	node->type = type;
-	node->file = ft_strdup(file);
+	node->heredoc_fd = -1;
+	if (type == HEREDOC)
+	{
+		node->quoted = has_quotes(file);
+		node->file = remove_quotes(file);
+	}
+	else
+	{
+		node->quoted = 0;
+		node->file = ft_strdup(file);
+	}
 	if (!node->file)
 		return (free(node), 0);
 	if (!*head)

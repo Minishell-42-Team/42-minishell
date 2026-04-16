@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/30 13:59:37 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/10 16:15:20 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/13 16:15:08 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,9 +72,9 @@ static int	ft_cd_builtin(t_command_ast *cmd, t_minishell_data **data)
 {
 	char	*arg;
 
+	arg = NULL;
 	if (ft_strcmp(cmd->command, "cd") == 0)
 	{
-		arg = NULL;
 		if (cmd->args)
 			arg = (char *)cmd->args->content;
 		ft_cd(arg, (*data)->envs);
@@ -85,8 +85,13 @@ static int	ft_cd_builtin(t_command_ast *cmd, t_minishell_data **data)
 
 int	exec_builtin(t_command_ast *cmd, t_minishell_data **data)
 {
+	int	ret;
+	
+	ret = 0;
 	if (!cmd || !cmd->command)
 		return (0);
+	if (ret == 2)
+		return (2);
 	if (exec_simple_builtin(cmd, data)
 		|| ft_export_builtin(cmd, data)
 		|| ft_unset_builtin(cmd, data)
