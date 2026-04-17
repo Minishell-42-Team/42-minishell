@@ -6,43 +6,11 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/10 06:22:02 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/13 15:44:21 by clwenhaj         ###   ########.fr       */
+/*   Updated: 2026/04/17 15:25:21 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-int	is_type_redir(t_token *token)
-{
-	return (token->type == APPEND || token->type == HEREDOC
-		|| token->type == REDIR_IN || token->type == REDIR_OUT);
-}
-
-void	affect_token(t_token **token, t_token *token_to_be)
-{
-	*token = token_to_be;
-}
-
-int	affect_command_param(t_command_ast *command, t_token *token)
-{
-	t_list	*node;
-
-	node = NULL;
-	if (!command->command)
-	{
-		command->command = ft_strdup(token->value);
-		if (!command->command)
-			return (0);
-	}
-	else
-	{
-		node = ft_lstnew(ft_strdup(token->value));
-		if (!node)
-			return (0);
-		ft_lstadd_back(&command->args, node);
-	}
-	return (1);
-}
 
 static void	ft_clear_redir(t_redir_file **head)
 {
@@ -86,27 +54,46 @@ void	ft_free_command(t_command_ast **command)
 	*command = NULL;
 }
 
+static int	is_quote_start(char c, char quote)
+{
+	if ((c == '\'' || c == '"') && quote == 0)
+		return (1);
+	return (0);
+}
+
+static void	handle_quote_state(char c, int *i, char *quote)
+{
+	if (is_quote_start(c, *quote))
+	{
+		*quote = c;
+		(*i)++;
+	}
+	else if (c == *quote)
+	{
+		*quote = 0;
+		(*i)++;
+	}
+}
+
 char	*remove_quotes(char *str)
 {
 	char	*res;
-	int		i = 0;
-	int		j = 0;
-	char	quote = 0;
+	int		i;
+	int		j;
+	char	quote;
 
 	if (!str)
 		return (NULL);
 	res = malloc(ft_strlen(str) + 1);
 	if (!res)
 		return (NULL);
+	i = 0;
+	j = 0;
+	quote = 0;
 	while (str[i])
 	{
-		if ((str[i] == '\'' || str[i] == '"') && quote == 0)
-			quote = str[i++];
-		else if (str[i] == quote)
-		{
-			quote = 0;
-			i++;
-		}
+		if (is_quote_start(str[i], quote) || str[i] == quote)
+			handle_quote_state(str[i], &i, &quote);
 		else
 			res[j++] = str[i++];
 	}

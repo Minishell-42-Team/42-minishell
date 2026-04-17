@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 15:44:47 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/13 18:33:23 by clwenhaj         ###   ########.fr       */
+/*   Updated: 2026/04/17 14:15:18 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,13 @@
 # include <sys/wait.h>
 # include <sys/stat.h>
 # include <fcntl.h>
-# define SIG_ERROR_MSG "Error : fail to catch a signal.\n"
 # include <string.h>
 # include <ctype.h>
+
+# define SIG_ERROR_MSG "Error : fail to catch a signal.\n"
+# define ERR_PIPE "Minishell: syntax error near unexpected token `|'\n"
+# define ERR_NEWLINE "Minishell: syntax error near unexpected token `newline'\n"
+# define ERR_HEREDOC "Minishell: warning: heredoc delimited by EOF\n"
 
 extern int	g_status;
 
@@ -61,12 +65,13 @@ typedef struct s_redir_file
 	int					quoted;
 }	t_redir_file;
 
-/*typedef enum	e_cmd_type
+typedef struct	s_heredoc
 {
-	CMD_SIMPLE,
-	CMD_AND,
-	CMD_OR,
-}	t_cmd_type;*/
+	const char	*delimiter;
+	t_env_var	*envs;
+	int			quoted;
+	int			pipefd[2];
+}	t_heredoc;
 
 typedef struct s_command_ast
 {
@@ -74,7 +79,6 @@ typedef struct s_command_ast
 	char					*command;
 	t_list					*args;
 	t_redir_file			*redirs;
-//	t_cmd_type				type;
 }	t_command_ast;
 
 typedef struct s_data
@@ -92,7 +96,6 @@ typedef struct s_minishell_data
 	t_list			*execdirs;
 }	t_minishell_data;
 
-//void			init_env_vars(t_env_var **envs);
 int				quit_error(char *msg);
 t_token_type	get_operator_type(t_data *data);
 t_token			*new_token(t_token_type type, char *value);
@@ -103,6 +106,8 @@ char			*remove_quotes(char *str);
 void			clean_quotes_command(t_command_ast *cmd);
 void			free_tokens(t_token **tokens);
 void			print_tokens(t_token *tokens);
+t_redir_file    *create_redir_node(t_token_type type, char *file);
+void			add_redir_back(t_redir_file **head, t_redir_file *node);
 char			*token_type_str(t_token_type type);
 t_command_ast	*parser(t_token *tokens);
 void			print_commands(t_command_ast *cmds);
@@ -115,13 +120,14 @@ void			ft_free(void **nptr);
 int				affect_command_param(t_command_ast *command, t_token *token);
 int				ft_exit(t_command_ast *cmd, t_minishell_data **data);
 int				apply_redirections(t_redir_file *redir);
-int				handle_heredoc(const char *delimiter, int quoted, t_env_var *envs);
+char			*expand_line(char *line, t_env_var *envs);
+int				handle_heredoc(const char *delimiter, int quoted,
+					t_env_var *envs);
 void			ft_free_table(char ***table, int len);
 void			fork_child_do(t_command_ast *command, t_minishell_data **data);
 void			fork_parent_do(int *fd_in, t_command_ast *command,
 					int pipefd_in, int pipefd_out);
 void			execute_pipeline(t_command_ast *cmds, t_minishell_data **data);
-//void			execute_conditional(t_command_ast *cmds, t_minishell_data **data);
 int				is_operator(char c);
 int				is_quote(char c);
 int				ft_isspace(char c);

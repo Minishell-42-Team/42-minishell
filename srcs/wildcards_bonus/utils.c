@@ -6,7 +6,7 @@
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/03 09:56:46 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/08 01:20:30 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/17 14:11:00 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,12 @@ int	add_new_arg(t_list **args, char *content, int *count)
 
 int	is_dir(const char *path)
 {
-	struct	stat	info;
+	struct stat	info;
 
 	if (stat(path, &info) != 0)
 		return (0);
 	return (S_ISDIR(info.st_mode));
 }
-
 
 void	get_pathname(char *path, const char *entry)
 {

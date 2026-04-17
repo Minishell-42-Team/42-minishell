@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 15:54:24 by clwenhaj          #+#    #+#             */
-/*   Updated: 2026/04/13 15:53:06 by clwenhaj         ###   ########.fr       */
+/*   Updated: 2026/04/17 14:27:47 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,9 +40,29 @@ static char	*read_word(t_data *data)
 	return (ft_strdup(buffer));
 }
 
+static void	handle_operator(t_data *data, t_token **tokens, t_token_type type)
+{
+	add_token(tokens, new_token(type, NULL));
+	if (type == APPEND || type == HEREDOC)
+		data->pos += 2;
+	else
+		data->pos++;
+}
+
+static int	handle_word(t_data *data, t_token **tokens)
+{
+	char	*word;
+
+	word = read_word(data);
+	if (!word)
+		return (free_tokens(tokens), 0);
+	add_token(tokens, new_token(WORD, word));
+	free(word);
+	return (1);
+}
+
 static int	lexer_loop(t_data *data, t_token **tokens)
 {
-	char			*word;
 	t_token_type	type;
 
 	while (data->line[data->pos])
@@ -53,19 +73,11 @@ static int	lexer_loop(t_data *data, t_token **tokens)
 			break ;
 		type = get_operator_type(data);
 		if (type != WORD)
-		{
-			add_token(tokens, new_token(type, NULL));
-			if (type == APPEND || type == HEREDOC)
-				data->pos += 2;
-			else
-				data->pos++;
-		}
+			handle_operator(data, tokens, type);
 		else
 		{
-			word = read_word(data);
-			if (!word)
-				return (free_tokens(tokens), 0);
-			(add_token(tokens, new_token(WORD, word)), free(word));
+			if (!handle_word(data, tokens))
+				return (0);
 		}
 	}
 	return (1);

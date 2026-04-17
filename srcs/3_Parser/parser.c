@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/10 04:51:52 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/13 11:30:08 by clwenhaj         ###   ########.fr       */
+/*   Updated: 2026/04/17 14:50:07 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,37 +29,13 @@ static t_command_ast	*init_command(void)
 static int	ft_addredir(t_redir_file **head, t_token_type type, char *file)
 {
 	t_redir_file	*node;
-	t_redir_file	*node_tmp;
 
 	if (!file)
 		return (0);
-	node = (t_redir_file *)malloc(sizeof(t_redir_file));
+	node = create_redir_node(type, file);
 	if (!node)
 		return (0);
-	node->next = NULL;
-	node->type = type;
-	node->heredoc_fd = -1;
-	if (type == HEREDOC)
-	{
-		node->quoted = has_quotes(file);
-		node->file = remove_quotes(file);
-	}
-	else
-	{
-		node->quoted = 0;
-		node->file = ft_strdup(file);
-	}
-	if (!node->file)
-		return (free(node), 0);
-	if (!*head)
-		*head = node;
-	else
-	{
-		node_tmp = *head;
-		while (node_tmp->next)
-			node_tmp = node_tmp->next;
-		node_tmp->next = node;
-	}
+	add_redir_back(head, node);
 	return (1);
 }
 
@@ -125,9 +101,9 @@ t_command_ast	*parser(t_token *tokens)
 	if (!cmds)
 	{
 		if (tokens && tokens->type == PIPE)
-			ft_putstr_fd("Minishell: syntax error near unexpected token `|'\n", 2);
+			ft_putstr_fd(ERR_PIPE, 2);
 		else
-			ft_putstr_fd("Minishell: syntax error near unexpected token `newline'\n", 2);
+			ft_putstr_fd(ERR_NEWLINE, 2);
 		return (NULL);
 	}
 	node = cmds;
