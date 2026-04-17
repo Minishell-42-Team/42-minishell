@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/23 23:49:38 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/16 18:36:14 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/17 14:47:17 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,6 +137,9 @@ void	execute_pipeline(t_command_ast *cmds, t_minishell_data **data)
 
 	if (!cmds && !((*data)->tokens))
 		g_status = 0;
+	if (cmds && cmds->command && ft_strcmp(cmds->command, "\\n") == 0
+		&& !cmds->next && !cmds->args && !cmds->redirs)
+		return ;
 	if (!cmds || !prepare_heredoc(cmds, (*data)->envs))
 		return ;
 	(signal(SIGINT, SIG_IGN), signal(SIGQUIT, SIG_IGN));

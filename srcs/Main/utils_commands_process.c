@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 23:18:10 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/13 16:29:31 by clwenhaj         ###   ########.fr       */
+/*   Updated: 2026/04/17 15:24:10 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,9 @@ static char	*get_link_to_file(char *command, t_list *execdirs)
 
 	if (ft_strchr(command, '/'))
 	{
+		if (is_dir(command))
+			return (ft_putstr_fd("Minishell: ", 2), ft_putstr_fd(command, 2),
+					ft_putstr_fd(": Is a directory\n", 2), NULL);
 		if (access(command, X_OK) == 0)
 			return (ft_strdup(command));
 		return (NULL);
@@ -51,9 +54,11 @@ static char	**get_args(t_command_ast *command, t_minishell_data **data,
 	int		i;
 
 	access_link = get_link_to_file(command->command, (*data)->execdirs);
-	if (!access_link)
+	if (!access_link && !is_dir(command->command))
 		return (ft_putstr_fd("Minishell: ", 2), ft_putstr_fd(command->command, 2),
 			ft_putstr_fd(": command not found\n", 2), NULL);
+	else if (!access_link)
+		return (NULL);
 	i = 0;
 	*len = ft_lstsize(command->args);
 	args = (char **)malloc(sizeof(char *) * (*len + 2));
@@ -123,8 +128,10 @@ void	fork_child_do(t_command_ast *command, t_minishell_data **data)
 	if (exec_builtin(command, data))
 		exit(g_status);
 	args = get_args(command, data, &len);
-	if (!args)
+	if (!args && !is_dir(command->command))
 		exit(127);
+	else if (!args)
+		exit(126);
 	envp = env_to_array((*data)->envs);
 	if (execve(args[0], args, envp) == -1)
 	{

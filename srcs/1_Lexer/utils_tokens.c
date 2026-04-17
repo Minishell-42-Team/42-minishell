@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/10 10:51:57 by clwenhaj          #+#    #+#             */
-/*   Updated: 2026/04/03 11:56:13 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/17 15:36:05 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,13 +34,29 @@ t_token_type	get_operator_type(t_data *data)
 
 	c = data->line[data->pos];
 	next = data->line[data->pos + 1];
-	if (c == '|')
-		return (PIPE);
 	if (c == '>' && next && next == '>')
 	{
 		data->pos++;
 		return (APPEND);
 	}
+	if (c == '&' && next && next == '&')
+	{
+		data->pos++;
+		return (AND_IF);
+	}
+	else if (c == '&')
+		return (AND);
+	else if (c == '|' && next && next == '|')
+	{
+		data->pos++;
+		return (OR_IF);
+	}
+	else if (c == '|')
+		return (PIPE);
+	else if (c == '!')
+		return (NOT);
+	else if (c == ';')
+		return (SEMICOLON);
 	if (c == '<' && next && next == '<')
 	{
 		data->pos++;
