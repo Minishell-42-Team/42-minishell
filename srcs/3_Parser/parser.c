@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/10 04:51:52 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/13 11:30:08 by clwenhaj         ###   ########.fr       */
+/*   Updated: 2026/04/16 18:40:03 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,17 +118,22 @@ t_command_ast	*parser(t_token *tokens)
 {
 	t_command_ast	*cmds;
 	t_command_ast	*node;
+	t_token			*token;
 
 	if (!tokens)
 		return (NULL);
 	cmds = get_commands(tokens);
 	if (!cmds)
 	{
-		if (tokens && tokens->type == PIPE)
-			ft_putstr_fd("Minishell: syntax error near unexpected token `|'\n", 2);
-		else
-			ft_putstr_fd("Minishell: syntax error near unexpected token `newline'\n", 2);
-		return (NULL);
+		token = tokens;
+		if (token && is_type_redir(token) && !token->next)
+			return (ft_putstr_fd(TOKEN_MSG, 2), g_status = 2, NULL);
+		while (token->next)
+			token = token->next;
+		if (tokens)
+			(ft_putstr_fd("Minishell: syntax error near unexpected token `",
+				2), ft_putstr_fd(token->value, 2), ft_putstr_fd("'\n", 2));
+		return (g_status = 2, NULL);
 	}
 	node = cmds;
 	while (node)

@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/23 23:49:38 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/13 16:18:40 by clwenhaj         ###   ########.fr       */
+/*   Updated: 2026/04/16 18:36:14 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,6 +135,8 @@ void	execute_pipeline(t_command_ast *cmds, t_minishell_data **data)
 	t_command_ast	*cmd;
 	int				i;
 
+	if (!cmds && !((*data)->tokens))
+		g_status = 0;
 	if (!cmds || !prepare_heredoc(cmds, (*data)->envs))
 		return ;
 	(signal(SIGINT, SIG_IGN), signal(SIGQUIT, SIG_IGN));
@@ -142,12 +144,10 @@ void	execute_pipeline(t_command_ast *cmds, t_minishell_data **data)
 		return ;
 	if (init_bf_execute(cmds, &cmd, &pids, &fd_in) == -1)
 		return ;
-	i = -1;
-	fd_in = STDIN_FILENO;
+	(i = -1, fd_in = STDIN_FILENO);
 	while (cmd)
 	{
-		pipefd[0] = -1;
-		pipefd[1] = -1;
+		(pipefd[0] = -1, pipefd[1] = -1);
 		if (cmd->next && !set_pipe(pipefd))
 		{
 			if (fd_in != STDIN_FILENO)
@@ -159,10 +159,7 @@ void	execute_pipeline(t_command_ast *cmds, t_minishell_data **data)
 		if (pids[i] < 0)
 		{
 			if (cmd->next)
-			{
-				close(pipefd[0]);
-				close(pipefd[1]);
-			}
+				(close(pipefd[0]), close(pipefd[1]));
 			if (fd_in != STDIN_FILENO)
 				close(fd_in);
 			free(pids);

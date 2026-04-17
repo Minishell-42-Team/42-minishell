@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 15:44:47 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/13 18:33:23 by clwenhaj         ###   ########.fr       */
+/*   Updated: 2026/04/16 18:30:59 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 # include <sys/stat.h>
 # include <fcntl.h>
 # define SIG_ERROR_MSG "Error : fail to catch a signal.\n"
+# define TOKEN_MSG "Minishell: syntax error near unexpected token `newline'\n"
 # include <string.h>
 # include <ctype.h>
 

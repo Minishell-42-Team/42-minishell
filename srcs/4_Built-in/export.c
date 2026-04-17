@@ -6,7 +6,7 @@
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/16 12:57:08 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/25 22:59:48 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/16 17:40:38 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,13 @@ static int	is_valid_identifier(char *str)
 			return (0);
 		i++;
 	}
-	while (str[i])
-	{
+	if (!str[i] || (str[i] == '=' && (str[i + 1] == '"'
+			|| str[i + 1] == '\'')))
+		return (1);
+	--i;
+	while (str[++i])
 		if (str[i] == '!')
 			return (0);
-		i++;
-	}
 	return (1);
 }
 
