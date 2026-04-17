@@ -6,14 +6,15 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 02:03:34 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/16 15:15:19 by clwenhaj         ###   ########.fr       */
+/*   Updated: 2026/04/17 14:03:56 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
 static int	ft_is_onlydigit(char *str)
 {
-	int i;
+	int	i;
 
 	if (!str)
 		return (0);
@@ -27,9 +28,11 @@ static int	ft_is_onlydigit(char *str)
 int	ft_exit(t_command_ast *cmd, t_minishell_data **data)
 {
 	if (cmd && ft_lstsize(cmd->args) > 1)
-		return (ft_putstr_fd("exit: too many arguments.\n", 2), g_status = 1, 0);
+		return (ft_putstr_fd("exit: too many arguments.\n", 2),
+			g_status = 1, 0);
 	if (cmd->args && ft_is_onlydigit((char *)cmd->args->content) != 1)
-		return (ft_putstr_fd("exit: non numeric arguments.\n", 2), g_status = 1, 0);
+		return (ft_putstr_fd("exit: non numeric arguments.\n", 2),
+			g_status = 1, 0);
 	if (cmd->args)
 		g_status = ft_atoi((char *)cmd->args->content) % 255;
 	ft_free_command(&(*data)->cmds);

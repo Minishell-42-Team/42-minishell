@@ -6,11 +6,11 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/01 00:23:08 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/13 15:37:39 by clwenhaj         ###   ########.fr       */
+/*   Updated: 2026/04/17 14:10:17 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "minishell.h"
+#include "minishell.h"
 
 static int	ft_matched(char *pattern, char *filename)
 {
@@ -41,8 +41,10 @@ static int	find_match(char *pattern, t_list **args, char *path, int *count)
 	char			*slash_pos;
 	int				len;
 
-	(dir = opendir(path), entry = readdir(dir));
-	(slash_pos = ft_strchr(pattern, '/'), len = ft_strlen(path));
+	dir = opendir(path);
+	entry = readdir(dir);
+	slash_pos = ft_strchr(pattern, '/');
+	len = ft_strlen(path);
 	while (entry)
 	{
 		get_pathname(path, entry->d_name);
@@ -54,7 +56,7 @@ static int	find_match(char *pattern, t_list **args, char *path, int *count)
 					return (closedir(dir), 0);
 			*slash_pos = '/';
 		}
-		else if (!slash_pos && ft_matched(pattern,	entry->d_name))
+		else if (!slash_pos && ft_matched(pattern, entry->d_name))
 			if (!is_p_dir(entry->d_name) && !add_new_arg(args, path + 2, count))
 				return (closedir(dir), 0);
 		(ft_bzero(path + len, 255 - len), entry = readdir(dir));
@@ -85,7 +87,10 @@ int	get_matched_args(t_command_ast *cmd)
 
 	if (!cmd->args)
 		return (1);
-	(arg = cmd->args, args = NULL, ft_bzero(path, 255), count = 0);
+	arg = cmd->args;
+	args = NULL;
+	ft_bzero(path, 255);
+	count = 0;
 	path[0] = '.';
 	while (arg)
 	{
@@ -99,7 +104,8 @@ int	get_matched_args(t_command_ast *cmd)
 		}
 		else
 			add_new_arg(&args, (char *)arg->content, NULL);
-		(arg = arg->next, count = 0);
+		arg = arg->next;
+		count = 0;
 	}
 	return (ft_lstclear(&cmd->args, free), cmd->args = args, 1);
 }
