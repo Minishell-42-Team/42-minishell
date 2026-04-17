@@ -57,6 +57,11 @@ char	*expand_variable(const char *str, int *pos, t_env_var *env_vars)
 		(*pos)++;
 		return (ft_itoa(g_status));
 	}
+	if (!ft_isalpha(str[*pos]) && str[*pos] != '_')
+	{
+		(*pos)++;
+		return (ft_strdup(""));
+	}
 	k = 0;
 	while (str[*pos] && (ft_isalnum(str[*pos]) || str[*pos] == '_'))
 	{
@@ -68,12 +73,13 @@ char	*expand_variable(const char *str, int *pos, t_env_var *env_vars)
 	return (get_env_val(key, env_vars));
 }
 
-/*static char	*handle_expansion(char *str, t_env_var *envs)
+static char	*handle_expansion(char *str, t_env_var *envs)
 {
 	char	*new_str;
 	int		i;
 	int		j;
 	char	quote;
+	char	q;
 
 	(new_str = ft_strdup(""), i = 0, quote = 0);
 	while (str && str[i])
@@ -84,6 +90,18 @@ char	*expand_variable(const char *str, int *pos, t_env_var *env_vars)
 				quote = str[i];
 			else
 				quote = 0;
+			new_str = ft_join_free(new_str, ft_substr(str, i++, 1));
+			continue ;
+		}
+		if (str[i] == '$' && str[i + 1] && (str[i + 1] == '"' || str[i + 1] == '\''))
+		{
+			q = str[i + 1];
+			i += 2;
+			while (str[i] && str[i] != q)
+				i++;
+			if (str[i + 1] == q)
+				i++;
+			continue ;
 		}
 		if (str[i] == '$' && quote != '\'' && str[i + 1] && (ft_isalnum(str[i
 						+ 1]) || str[i + 1] == '_' || str[i + 1] == '?'))
@@ -94,47 +112,6 @@ char	*expand_variable(const char *str, int *pos, t_env_var *env_vars)
 		}
 		else
 			new_str = ft_join_free(new_str, ft_substr(str, i++, 1));
-	}
-	return (new_str);
-}*/
-
-static char	*handle_expansion(char *str, t_env_var *envs)
-{
-	char	*new_str;
-	int		i;
-	int		j;
-	int		k;
-	char	quote;
-
-	(new_str = ft_strdup(""), i = 0, quote = 0);
-	while (str && str[i])
-	{
-		if (is_quote(str[i]) && (quote == 0 || quote == str[i]))
-		{
-			if (quote == 0)
-				quote = str[i];
-			else
-				quote = 0;
-			i++;
-			continue ;
-		}
-		if (str[i] == '$' && quote != '\'')
-		{
-			k = i + 1;
-			while (str[k] == '"' || str[k] == '\'')
-				k++;
-
-			if (str[k] && (ft_isalnum(str[k]) || str[k] == '_' || str[k] == '?'))
-			{
-				j = k;
-				new_str = ft_join_free(new_str,
-						expand_variable(str, &j, envs));
-				i = j;
-				continue ;
-			}
-		}
-		new_str = ft_join_free(new_str, ft_substr(str, i, 1));
-		i++;
 	}
 	return (new_str);
 }
