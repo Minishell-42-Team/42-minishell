@@ -27,36 +27,8 @@ void	free_tokens(t_token **tokens)
 	*tokens = NULL;
 }
 
-t_token_type	get_operator_type(t_data *data)
+static t_token_type	get_operator_type_redir(char c, char next, t_data *data)
 {
-	char	c;
-	char	next;
-
-	c = data->line[data->pos];
-	next = data->line[data->pos + 1];
-	if (c == '>' && next && next == '>')
-	{
-		data->pos++;
-		return (APPEND);
-	}
-	if (c == '&' && next && next == '&')
-	{
-		data->pos++;
-		return (AND_IF);
-	}
-	else if (c == '&')
-		return (AND);
-	else if (c == '|' && next && next == '|')
-	{
-		data->pos++;
-		return (OR_IF);
-	}
-	else if (c == '|')
-		return (PIPE);
-	else if (c == '!')
-		return (NOT);
-	else if (c == ';')
-		return (SEMICOLON);
 	if (c == '<' && next && next == '<')
 	{
 		data->pos++;
@@ -65,8 +37,43 @@ t_token_type	get_operator_type(t_data *data)
 	if (c == '<')
 		return (REDIR_IN);
 	if (c == '>')
+	{
+		if (next && next == '>')
+		{
+			data->pos++;
+			return (APPEND);
+		}
 		return (REDIR_OUT);
+	}
 	return (WORD);
+}
+
+t_token_type	get_operator_type(t_data *data)
+{
+	char	c;
+	char	next;
+
+	c = data->line[data->pos];
+	next = data->line[data->pos + 1];
+	if (c == '&' && next && next == '&')
+	{
+		data->pos++;
+		return (AND_IF);
+	}
+	if (c == '&')
+		return (AND);
+	if (c == '|' && next && next == '|')
+	{
+		data->pos++;
+		return (OR_IF);
+	}
+	if (c == '|')
+		return (PIPE);
+	if (c == '!')
+		return (NOT);
+	if (c == ';')
+		return (SEMICOLON);
+	return (get_operator_type_redir(c, next, data));
 }
 
 char	*token_type_str(t_token_type type)
@@ -93,16 +100,6 @@ void	print_tokens(t_token *tokens)
 		printf("TYPE: %s", token_type_str(tokens->type));
 		if (tokens->value)
 			printf(" | VALUE: %s", tokens->value);
-		else if (tokens->type == PIPE)
-			printf(" | VALUE: |");
-		else if (tokens->type == REDIR_OUT)
-			printf(" | VALUE: >");
-		else if (tokens->type == REDIR_IN)
-			printf(" | VALUE: <");
-		else if (tokens->type == APPEND)
-			printf(" | VALUE: >>");
-		else if (tokens->type == HEREDOC)
-			printf(" | VALUE: <<");
 		printf("\n");
 		tokens = tokens->next;
 	}

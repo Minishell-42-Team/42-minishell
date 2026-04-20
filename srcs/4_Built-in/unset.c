@@ -6,7 +6,7 @@
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 14:49:21 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/03/17 15:21:05 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/20 13:13:47 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ static int	check_env_and_del(t_env_var *env, char *key)
 	return (0);
 }
 
-void	ft_unset(t_env_var **envs, char *key)
+int	ft_unset(t_env_var **envs, char *key)
 {
 	t_env_var	*node;
 	t_env_var	*save_node;
@@ -33,8 +33,7 @@ void	ft_unset(t_env_var **envs, char *key)
 	if (check_env_and_del(node, key))
 	{
 		*envs = (*envs)->next;
-		free(node);
-		return ;
+		return (free(node), 0);
 	}
 	node = node->next;
 	while (node)
@@ -42,10 +41,10 @@ void	ft_unset(t_env_var **envs, char *key)
 		if (check_env_and_del(node, key))
 		{
 			save_node->next = node->next;
-			free(node);
-			return ;
+			return (free(node), 0);
 		}
 		save_node = save_node->next;
 		node = node->next;
 	}
+	return (0);
 }

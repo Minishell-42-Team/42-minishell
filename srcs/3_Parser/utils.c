@@ -85,31 +85,3 @@ void	ft_free_command(t_command_ast **command)
 	}
 	*command = NULL;
 }
-
-char	*remove_quotes(char *str)
-{
-	char	*res;
-	int		i = 0;
-	int		j = 0;
-	char	quote = 0;
-
-	if (!str)
-		return (NULL);
-	res = malloc(ft_strlen(str) + 1);
-	if (!res)
-		return (NULL);
-	while (str[i])
-	{
-		if ((str[i] == '\'' || str[i] == '"') && quote == 0)
-			quote = str[i++];
-		else if (str[i] == quote)
-		{
-			quote = 0;
-			i++;
-		}
-		else
-			res[j++] = str[i++];
-	}
-	res[j] = '\0';
-	return (res);
-}

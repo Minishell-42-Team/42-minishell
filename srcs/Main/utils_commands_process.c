@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 23:18:10 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/17 15:24:10 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/20 15:33:42 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,14 +19,7 @@ static char	*get_link_to_file(char *command, t_list *execdirs)
 	int		len;
 
 	if (ft_strchr(command, '/'))
-	{
-		if (is_dir(command))
-			return (ft_putstr_fd("Minishell: ", 2), ft_putstr_fd(command, 2),
-					ft_putstr_fd(": Is a directory\n", 2), NULL);
-		if (access(command, X_OK) == 0)
-			return (ft_strdup(command));
-		return (NULL);
-	}
+		return (handle_relative_command(command));
 	node = execdirs;
 	while (node)
 	{
@@ -48,34 +41,22 @@ static char	*get_link_to_file(char *command, t_list *execdirs)
 static char	**get_args(t_command_ast *command, t_minishell_data **data,
 		int *len)
 {
-	char	**args;
 	char	*access_link;
-	t_list	*node;
-	int		i;
 
+	if (ft_strcmp(command->command, "") == 0)
+		return (ft_putstr_fd("Minishell : : command not found\n", 2), NULL);
 	access_link = get_link_to_file(command->command, (*data)->execdirs);
 	if (!access_link && !is_dir(command->command))
-		return (ft_putstr_fd("Minishell: ", 2), ft_putstr_fd(command->command, 2),
-			ft_putstr_fd(": command not found\n", 2), NULL);
-	else if (!access_link)
-		return (NULL);
-	i = 0;
-	*len = ft_lstsize(command->args);
-	args = (char **)malloc(sizeof(char *) * (*len + 2));
-	if (!args)
-		return (free(access_link), NULL);
-	args[0] = access_link;
-	node = command->args;
-	while (node)
 	{
-		args[i + 1] = ft_strdup((char *)node->content);
-		if (!args[i + 1])
-			return (ft_free_table(&args, i + 1), NULL);
-		node = node->next;
-		i++;
+		ft_putstr_fd("Minishell: ", 2);
+		ft_putstr_fd(command->command, 2);
+		ft_putstr_fd(": command not found\n", 2);
+		return (NULL);
 	}
-	args[i + 1] = NULL;
-	return (args);
+	if (!access_link)
+		return (NULL);
+	*len = ft_lstsize(command->args);
+	return (fill_args(command, access_link, *len));
 }
 
 int	check_built_parent(t_command_ast *cmd, t_minishell_data **data)
@@ -84,11 +65,10 @@ int	check_built_parent(t_command_ast *cmd, t_minishell_data **data)
 	int	stdout_save;
 	int	ret;
 
-	if (!cmd->command)
-		return (0);
-	if (ft_strcmp(cmd->command, "export") != 0 && ft_strcmp(cmd->command,
-			"unset") != 0 && ft_strcmp(cmd->command, "exit") != 0
-		&& ft_strcmp(cmd->command, "cd") != 0)
+	if (!cmd->command || (ft_strcmp(cmd->command, "export") != 0
+			&& ft_strcmp(cmd->command, "unset") != 0
+			&& ft_strcmp(cmd->command, "exit") != 0
+			&& ft_strcmp(cmd->command, "cd") != 0))
 		return (0);
 	if (ft_strcmp(cmd->command, "exit") == 0)
 		exec_builtin(cmd, data);
@@ -96,18 +76,12 @@ int	check_built_parent(t_command_ast *cmd, t_minishell_data **data)
 	stdout_save = dup(STDOUT_FILENO);
 	if (!apply_redirections(cmd->redirs))
 	{
-		dup2(stdin_save, STDIN_FILENO);
-		dup2(stdout_save, STDOUT_FILENO);
-		close(stdin_save);
-		close(stdout_save);
+		restore_io(stdin_save, stdout_save);
 		return (1);
 	}
 	clean_quotes_command(cmd);
 	ret = exec_builtin(cmd, data);
-	dup2(stdin_save, STDIN_FILENO);
-	dup2(stdout_save, STDOUT_FILENO);
-	close(stdin_save);
-	close(stdout_save);
+	restore_io(stdin_save, stdout_save);
 	if (ret == 2)
 		ft_exit(cmd, data);
 	return (1);
@@ -119,7 +93,8 @@ void	fork_child_do(t_command_ast *command, t_minishell_data **data)
 	char	**envp;
 	int		len;
 
-	(signal(SIGINT, SIG_DFL), signal(SIGQUIT, SIG_DFL));
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
 	if (!apply_redirections(command->redirs))
 		exit(EXIT_FAILURE);
 	clean_quotes_command(command);
@@ -128,37 +103,28 @@ void	fork_child_do(t_command_ast *command, t_minishell_data **data)
 	if (exec_builtin(command, data))
 		exit(g_status);
 	args = get_args(command, data, &len);
-	if (!args && !is_dir(command->command))
-		exit(127);
-	else if (!args)
-		exit(126);
-	envp = env_to_array((*data)->envs);
-	if (execve(args[0], args, envp) == -1)
+	if (!args)
 	{
-		perror("execve");
-		ft_free_table(&args, len);
-		ft_free_table(&envp, ft_lstsize((t_list *)(*data)->envs));
+		if (is_dir(command->command))
+			exit(126);
 		exit(127);
 	}
-	ft_free_table(&args, len);
-	ft_free_table(&envp, ft_lstsize((t_list *)(*data)->envs));
-	exit(EXIT_FAILURE);
+	envp = env_to_array((*data)->envs);
+	execve(args[0], args, envp);
+	perror("execve");
+	exit(127);
 }
 
-void	fork_parent_do(int *fd_in, t_command_ast *command, int pipefd_in,
-		int pipefd_out)
+void	fork_parent_do(int *fd_in, t_command_ast *cmd, int p_in, int p_out)
 {
 	if (*fd_in != STDIN_FILENO)
 		close(*fd_in);
-	if (command->next)
+	if (cmd->next)
 	{
-		if (pipefd_out != -1)
-			close(pipefd_out);
-		*fd_in = pipefd_in;
+		if (p_out != -1)
+			close(p_out);
+		*fd_in = p_in;
 	}
-	else
-	{
-		if (pipefd_in != -1)
-			close(pipefd_in);
-	}
+	else if (p_in != -1)
+		close(p_in);
 }

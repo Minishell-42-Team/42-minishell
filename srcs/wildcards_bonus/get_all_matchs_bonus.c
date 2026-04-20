@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "minishell.h"
+#include "minishell.h"
 
 static int	ft_matched(char *pattern, char *filename)
 {
@@ -29,9 +29,25 @@ static int	ft_matched(char *pattern, char *filename)
 	return (0);
 }
 
-static int	is_p_dir(char *path)
+static int	find_match(char *pattern, t_list **args, char *path, int *count);
+
+static int	handle_match_logic(t_match_data *d, char *sp, struct dirent *e)
 {
-	return (ft_strcmp(path, "..") == 0 || ft_strcmp(path, ".") == 0);
+	if (sp && !is_p_dir(e->d_name))
+	{
+		*sp = '\0';
+		if (is_dir(d->path) && ft_matched(d->pattern, e->d_name))
+			if (!find_match(sp + 1, d->args, d->path, d->count))
+				return (0);
+		*sp = '/';
+	}
+	else if (!sp && ft_matched(d->pattern, e->d_name))
+	{
+		if (!is_p_dir(e->d_name) && !add_new_arg(d->args,
+				d->path + 2, d->count))
+			return (0);
+	}
+	return (1);
 }
 
 static int	find_match(char *pattern, t_list **args, char *path, int *count)
@@ -40,40 +56,44 @@ static int	find_match(char *pattern, t_list **args, char *path, int *count)
 	struct dirent	*entry;
 	char			*slash_pos;
 	int				len;
+	t_match_data	d;
 
-	(dir = opendir(path), entry = readdir(dir));
-	(slash_pos = ft_strchr(pattern, '/'), len = ft_strlen(path));
+	dir = opendir(path);
+	if (!dir)
+		return (1);
+	slash_pos = ft_strchr(pattern, '/');
+	len = ft_strlen(path);
+	d.args = args;
+	d.count = count;
+	d.path = path;
+	d.pattern = pattern;
+	entry = readdir(dir);
 	while (entry)
 	{
 		get_pathname(path, entry->d_name);
-		if (slash_pos && !is_p_dir(entry->d_name))
-		{
-			*slash_pos = '\0';
-			if (is_dir(path) && ft_matched(pattern, entry->d_name))
-				if (!find_match(slash_pos + 1, args, path, count))
-					return (closedir(dir), 0);
-			*slash_pos = '/';
-		}
-		else if (!slash_pos && ft_matched(pattern,	entry->d_name))
-			if (!is_p_dir(entry->d_name) && !add_new_arg(args, path + 2, count))
-				return (closedir(dir), 0);
-		(ft_bzero(path + len, 255 - len), entry = readdir(dir));
+		if (!handle_match_logic(&d, slash_pos, entry))
+			return (closedir(dir), 0);
+		ft_bzero(path + len, 255 - len);
+		entry = readdir(dir);
 	}
 	return (closedir(dir), 1);
 }
 
-int	has_quotes(char *str)
+static int	process_wildcard(t_list *arg, t_list **args, char *path, int *count)
 {
-	int	i;
+	char	*content;
 
-	i = 0;
-	while (str[i])
+	content = (char *)arg->content;
+	if (ft_strchr(content, '*') && !has_quotes(content))
 	{
-		if (str[i] == '\'' || str[i] == '"')
-			return (1);
-		i++;
+		if (!find_match(content, args, path, count))
+			return (0);
+		if (*count == 0)
+			add_new_arg(args, content, NULL);
 	}
-	return (0);
+	else
+		add_new_arg(args, content, NULL);
+	return (1);
 }
 
 int	get_matched_args(t_command_ast *cmd)
@@ -85,21 +105,21 @@ int	get_matched_args(t_command_ast *cmd)
 
 	if (!cmd->args)
 		return (1);
-	(arg = cmd->args, args = NULL, ft_bzero(path, 255), count = 0);
-	path[0] = '.';
+	arg = cmd->args;
+	args = NULL;
 	while (arg)
 	{
-		if (ft_strchr((char *)arg->content, '*')
-			&& !has_quotes((char *)arg->content))
+		ft_bzero(path, 255);
+		path[0] = '.';
+		count = 0;
+		if (!process_wildcard(arg, &args, path, &count))
 		{
-			if (!find_match((char *)arg->content, &args, path, &count))
-				return (ft_lstclear(&args, free), 0);
-			if (count == 0)
-				add_new_arg(&args, (char *)arg->content, NULL);
+			ft_lstclear(&args, free);
+			return (0);
 		}
-		else
-			add_new_arg(&args, (char *)arg->content, NULL);
-		(arg = arg->next, count = 0);
+		arg = arg->next;
 	}
-	return (ft_lstclear(&cmd->args, free), cmd->args = args, 1);
+	ft_lstclear(&cmd->args, free);
+	cmd->args = args;
+	return (1);
 }

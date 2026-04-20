@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/10 04:51:52 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/17 15:50:32 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/20 12:49:41 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,50 +26,16 @@ static t_command_ast	*init_command(void)
 	return (command);
 }
 
-static int	ft_addredir(t_redir_file **head, t_token_type type, char *file)
-{
-	t_redir_file	*node;
-	t_redir_file	*node_tmp;
-
-	if (!file)
-		return (0);
-	node = (t_redir_file *)malloc(sizeof(t_redir_file));
-	if (!node)
-		return (0);
-	node->next = NULL;
-	node->type = type;
-	node->heredoc_fd = -1;
-	if (type == HEREDOC)
-	{
-		node->quoted = has_quotes(file);
-		node->file = remove_quotes(file);
-	}
-	else
-	{
-		node->quoted = 0;
-		node->file = ft_strdup(file);
-	}
-	if (!node->file)
-		return (free(node), 0);
-	if (!*head)
-		*head = node;
-	else
-	{
-		node_tmp = *head;
-		while (node_tmp->next)
-			node_tmp = node_tmp->next;
-		node_tmp->next = node;
-	}
-	return (1);
-}
-
 int	get_command_param(t_command_ast *command, t_token **curr_token)
 {
 	if (!(*curr_token))
 		return (1);
-	else if ((*curr_token)->type == PIPE && (*curr_token)->next)
-		return (affect_token(curr_token, (*curr_token)->next), 1);
-	else if ((*curr_token)->type == WORD && (*curr_token)->value)
+	if ((*curr_token)->type == PIPE && (*curr_token)->next)
+	{
+		affect_token(curr_token, (*curr_token)->next);
+		return (1);
+	}
+	if ((*curr_token)->type == WORD && (*curr_token)->value)
 	{
 		if (!affect_command_param(command, *curr_token))
 			return (0);
@@ -84,9 +50,7 @@ int	get_command_param(t_command_ast *command, t_token **curr_token)
 	else
 		return (0);
 	*curr_token = (*curr_token)->next;
-	if (get_command_param(command, curr_token))
-		return (1);
-	return (0);
+	return (get_command_param(command, curr_token));
 }
 
 static t_command_ast	*get_commands(t_token *tokens)
@@ -106,40 +70,53 @@ static t_command_ast	*get_commands(t_token *tokens)
 	{
 		current_cmd->next = init_command();
 		if (!current_cmd->next)
-			return (ft_free_command(&cmds), NULL);
+		{
+			ft_free_command(&cmds);
+			return (NULL);
+		}
 		current_cmd = current_cmd->next;
 	}
 	if (!curr_token)
 		return (cmds);
-	return (ft_free_command(&cmds), NULL);
+	ft_free_command(&cmds);
+	return (NULL);
+}
+
+static void	handle_parser_error(t_token *tokens, t_command_ast *cmds)
+{
+	free(cmds);
+	g_status = 2;
+	if (tokens && is_type_redir(tokens) && !tokens->next)
+		ft_putstr_fd(TOKEN_MSG, 2);
+	else if (tokens)
+	{
+		ft_putstr_fd("Minishell: syntax error near unexpected token `", 2);
+		ft_putstr_fd(tokens->value, 2);
+		ft_putstr_fd("'\n", 2);
+	}
 }
 
 t_command_ast	*parser(t_token *tokens)
 {
 	t_command_ast	*cmds;
 	t_command_ast	*node;
-	t_token			*token;
 
 	if (!tokens)
 		return (NULL);
 	cmds = get_commands(tokens);
 	if (!cmds || tokens->type == PIPE)
 	{
-		token = tokens;
-		free(cmds);
-		g_status = 2;
-		if (token && is_type_redir(token) && !token->next)
-			return (ft_putstr_fd(TOKEN_MSG, 2), NULL);
-		if (tokens)
-			(ft_putstr_fd("Minishell: syntax error near unexpected token `",
-				2), ft_putstr_fd(token->value, 2), ft_putstr_fd("'\n", 2));
+		handle_parser_error(tokens, cmds);
 		return (NULL);
 	}
 	node = cmds;
 	while (node)
 	{
 		if (!get_matched_args(node))
-			return (ft_free_command(&cmds), NULL);
+		{
+			ft_free_command(&cmds);
+			return (NULL);
+		}
 		node = node->next;
 	}
 	return (cmds);

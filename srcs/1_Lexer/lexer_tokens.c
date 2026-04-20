@@ -44,27 +44,25 @@ static char	*get_token_value(t_token_type type)
 {
 	if (type == PIPE)
 		return (ft_strdup("|"));
-
-	else if (type == REDIR_IN)
+	if (type == REDIR_IN)
 		return (ft_strdup("<"));
-	else if (type == REDIR_OUT)
+	if (type == REDIR_OUT)
 		return (ft_strdup(">"));
-	else if (type == APPEND)
+	if (type == APPEND)
 		return (ft_strdup(">>"));
-	else if (type == HEREDOC)
+	if (type == HEREDOC)
 		return (ft_strdup("<<"));
-	else if (type == SEMICOLON)
+	if (type == SEMICOLON)
 		return (ft_strdup(";"));
-	else if (type == AND)
+	if (type == AND)
 		return (ft_strdup("&"));
-	else if (type == AND_IF)
+	if (type == AND_IF)
 		return (ft_strdup("&&"));
-	else if (type == OR_IF)
+	if (type == OR_IF)
 		return (ft_strdup("||"));
-	else if (type == NOT)
+	if (type == NOT)
 		return (ft_strdup("!"));
-	else
-		return (NULL);
+	return (NULL);
 }
 
 static int	lexer_loop(t_data *data, t_token **tokens)
@@ -80,20 +78,15 @@ static int	lexer_loop(t_data *data, t_token **tokens)
 			break ;
 		type = get_operator_type(data);
 		if (type != WORD)
-		{
 			word = get_token_value(type);
-			if (!word)
-				return (free_tokens(tokens), 0);
-			(add_token(tokens, new_token(type, word)), free(word));
-			data->pos++;
-		}
 		else
-		{
 			word = read_word(data);
-			if (!word)
-				return (free_tokens(tokens), 0);
-			(add_token(tokens, new_token(WORD, word)), free(word));
-		}
+		if (!word)
+			return (free_tokens(tokens), 0);
+		add_token(tokens, new_token(type, word));
+		free(word);
+		if (type != WORD)
+			data->pos++;
 	}
 	return (1);
 }

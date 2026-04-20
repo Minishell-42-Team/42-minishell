@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 15:44:47 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/16 18:30:59 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/20 12:48:55 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,20 +62,12 @@ typedef struct s_redir_file
 	int					quoted;
 }	t_redir_file;
 
-/*typedef enum	e_cmd_type
-{
-	CMD_SIMPLE,
-	CMD_AND,
-	CMD_OR,
-}	t_cmd_type;*/
-
 typedef struct s_command_ast
 {
 	struct s_command_ast	*next;
 	char					*command;
 	t_list					*args;
 	t_redir_file			*redirs;
-//	t_cmd_type				type;
 }	t_command_ast;
 
 typedef struct s_data
@@ -93,13 +85,22 @@ typedef struct s_minishell_data
 	t_list			*execdirs;
 }	t_minishell_data;
 
-//void			init_env_vars(t_env_var **envs);
+typedef struct s_match_data
+{
+	t_list	**args;
+	int		*count;
+	char	*path;
+	char	*pattern;
+}	t_match_data;
+
 int				quit_error(char *msg);
 t_token_type	get_operator_type(t_data *data);
 t_token			*new_token(t_token_type type, char *value);
 void			add_token(t_token **head, t_token *new);
 t_token			*lexer(char *line, t_env_var *env_vars);
 void			expander_tokens(t_token *tokens, t_env_var *envs);
+char			*get_env_val(const char *key, t_env_var *env_vars);
+char			*ft_join_free(char *s1, char *s2);
 char			*remove_quotes(char *str);
 void			clean_quotes_command(t_command_ast *cmd);
 void			free_tokens(t_token **tokens);
@@ -110,37 +111,46 @@ void			print_commands(t_command_ast *cmds);
 int				is_type_redir(t_token *token);
 void			affect_token(t_token **token, t_token *token_to_be);
 void			ft_free_command(t_command_ast **command);
-char			*expand_variable(const char *str,
-					int *pos, t_env_var *env_vars);
+int				ft_addredir(t_redir_file **head, t_token_type type, char *f);
+char			*handle_relative_command(char *command);
+char			**fill_args(t_command_ast *cmd, char *access_link, int len);
+void			restore_io(int stdin_save, int stdout_save);
+char			*expand_variable(const char *s, int *p, t_env_var *ev);
 void			ft_free(void **nptr);
-int				affect_command_param(t_command_ast *command, t_token *token);
+int				affect_command_param(t_command_ast *cmd, t_token *t);
 int				ft_exit(t_command_ast *cmd, t_minishell_data **data);
 int				apply_redirections(t_redir_file *redir);
-int				handle_heredoc(const char *delimiter, int quoted, t_env_var *envs);
+int				handle_heredoc(const char *delim, int quoted,
+					t_env_var *envs);
+void			ft_wait_child(t_command_ast *cmd, pid_t *pids);
+int				prepare_heredoc(t_command_ast *cmds, t_env_var *envs);
 void			ft_free_table(char ***table, int len);
 void			fork_child_do(t_command_ast *command, t_minishell_data **data);
-void			fork_parent_do(int *fd_in, t_command_ast *command,
-					int pipefd_in, int pipefd_out);
+void			fork_parent_do(int *fd_in, t_command_ast *cmd,
+					int p_i, int p_o);
 void			execute_pipeline(t_command_ast *cmds, t_minishell_data **data);
-//void			execute_conditional(t_command_ast *cmds, t_minishell_data **data);
 int				is_operator(char c);
 int				is_quote(char c);
 int				ft_isspace(char c);
-t_token			*new_token(t_token_type type, char *value);
-void			add_token(t_token **head, t_token *new);
-int				check_built_parent(t_command_ast *cmd, t_minishell_data **data);
+void			ignore_signals(void);
+void			handle_child(t_minishell_data **d, t_command_ast *c, int *p,
+					int f);
+int				check_built_parent(t_command_ast *c, t_minishell_data **d);
 int				get_fdin(t_command_ast *cmd);
 int				get_fdout(t_command_ast *cmd);
 int				open_file(t_redir_file *redir);
 int				exec_builtin(t_command_ast *cmd, t_minishell_data **data);
+int				exec_simple_builtin_2(t_command_ast *cmd);
+int				ft_cd_builtin(t_command_ast *cmd, t_minishell_data **data);
 int				get_matched_args(t_command_ast *cmd);
 void			ft_free_arg(t_list **head, t_list **node_to_free);
 void			handle_fork_signal(int sig);
 void			handle_signal(int sig);
 int				add_new_arg(t_list **args, char *content, int *count);
 int				is_dir(const char *path);
+int				is_p_dir(char *path);
 void			get_pathname(char *path, const char *entry);
-char			*remove_quotes(char *str);
 int				has_quotes(char *str);
+int				ft_addredir(t_redir_file **head, t_token_type type, char *file);
 
 #endif

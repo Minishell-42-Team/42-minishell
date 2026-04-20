@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/13 19:01:17 by clwenhaj          #+#    #+#             */
-/*   Updated: 2026/04/10 13:40:04 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/20 13:09:12 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 // getcwd(NULL, 0) alloue dynamiquement la memoire pour le chemin
 #include "builtin.h"
 
-void	ft_pwd(void)
+int	ft_pwd(void)
 {
 	char	*cwd;
 
@@ -27,4 +27,5 @@ void	ft_pwd(void)
 		printf("%s\n", cwd);
 		free(cwd);
 	}
+	return (0);
 }

@@ -19,3 +19,34 @@ int	ft_check_builtin_must_not_fork(char *command)
 		return (1);
 	return (0);
 }
+
+int	find_pos_equal(char *arg)
+{
+	int	i;
+
+	i = 0;
+	while (arg[i] && arg[i] != '=')
+		i++;
+	return (i);
+}
+
+int	set_dir(char *dir, t_list **execdirs)
+{
+	t_list	*node;
+	char	*dir_c;
+	int		len;
+
+	len = ft_strlen(dir);
+	dir_c = (char *)ft_calloc(len + 1, sizeof(char));
+	if (!dir_c)
+		return (0);
+	ft_strlcat(dir_c, dir, len + 1);
+	node = ft_lstnew(dir_c);
+	if (!node)
+	{
+		free(dir_c);
+		return (0);
+	}
+	ft_lstadd_back(execdirs, node);
+	return (1);
+}

@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 02:03:34 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/16 18:47:07 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/20 13:26:33 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,9 @@ int	main(int argc, char **argv, char **envp)
 	data = (t_minishell_data *)malloc(sizeof(t_minishell_data));
 	if (!data)
 		return (EXIT_FAILURE);
-	(data->envs = NULL, data->execdirs = NULL, data->tokens = NULL);
+	data->envs = NULL;
+	data->execdirs = NULL;
+	data->tokens = NULL;
 	data->cmds = NULL;
 	i = -1;
 	while (envp[++i])

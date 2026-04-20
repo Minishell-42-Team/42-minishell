@@ -15,7 +15,10 @@
 static int	set_pipe(int pipefd[2])
 {
 	if (pipe(pipefd) == -1)
-		return (perror("pipe"), 0);
+	{
+		perror("pipe");
+		return (0);
+	}
 	return (1);
 }
 
@@ -48,133 +51,79 @@ static void	dup2_close(int fd_in, t_command_ast *cmd, int pipfd_in,
 	}
 }
 
-static void	ft_wait_child(t_command_ast *cmd, pid_t *pids)
-{
-	t_command_ast	*node;
-	int				status;
-	int				i;
-
-	(node = cmd, i = 0);
-	if (!pids)
-		return ;
-	while (node)
-	{
-		waitpid(pids[i++], &status, 0);
-		if (!node->next)
-		{
-			if (WIFEXITED(status))
-				g_status = WEXITSTATUS(status);
-			else if (WIFSIGNALED(status))
-			{
-				g_status = 128 + WTERMSIG(status);
-				if (g_status == 131)
-					ft_putstr_fd("Quit (core dumped)\n", 2);
-				else if (g_status == 130)
-					ft_putstr_fd("\n", 2);
-			}
-		}
-		node = node->next;
-	}
-}
-
 static int	init_bf_execute(t_command_ast *cmds, t_command_ast **cmd,
 		pid_t **pids, int *fd_in)
 {
 	t_command_ast	*node;
 	int				i;
 
-	(node = cmds, *cmd = cmds, *fd_in = STDIN_FILENO, i = 0);
+	node = cmds;
+	*cmd = cmds;
+	*fd_in = STDIN_FILENO;
+	i = 0;
 	while (node)
 	{
-		if (cmds->next)
-			i++;
-		else if (node->command && !ft_check_builtin_must_not_fork(node->command)
-			&& ft_strcmp(node->command, "cd") != 0)
-			i++;
-		else if (!node->command)
+		if (cmds->next || (node->command
+				&& !ft_check_builtin_must_not_fork(node->command)
+				&& ft_strcmp(node->command, "cd") != 0) || !node->command)
 			i++;
 		node = node->next;
 	}
 	if (i == 0)
-		return (*pids = NULL, 0);
+	{
+		*pids = NULL;
+		return (0);
+	}
 	*pids = (pid_t *)malloc(sizeof(pid_t) * i);
 	if (!*pids)
 		return (-1);
 	return (i);
 }
 
-static int	prepare_heredoc(t_command_ast *cmds, t_env_var *envs)
+static void	run_pipeline_loop(t_minishell_data **data, t_command_ast *cmd,
+		pid_t *pids, int *fd_in)
 {
-	t_command_ast	*cmd;
-	t_redir_file	*redir;
+	int	p[2];
+	int	i;
 
-	cmd = cmds;
+	i = -1;
 	while (cmd)
 	{
-		redir = cmd->redirs;
-		while (redir)
+		p[0] = -1;
+		p[1] = -1;
+		if (cmd->next && !set_pipe(p))
+			return ;
+		pids[++i] = fork();
+		if (pids[i] == 0)
 		{
-			if (redir->type == HEREDOC)
-			{
-				redir->heredoc_fd = handle_heredoc(redir->file, redir->quoted, envs);
-				if (redir->heredoc_fd < 0)
-					return (g_status = 130, 0);
-			}
-			redir = redir->next;
+			dup2_close(*fd_in, cmd, p[0], p[1]);
+			fork_child_do(cmd, data);
 		}
+		fork_parent_do(fd_in, cmd, p[0], p[1]);
 		cmd = cmd->next;
 	}
-	return (1);
 }
 
 void	execute_pipeline(t_command_ast *cmds, t_minishell_data **data)
 {
-	int				pipefd[2];
 	int				fd_in;
 	pid_t			*pids;
 	t_command_ast	*cmd;
-	int				i;
 
-	if (!cmds && !((*data)->tokens))
-		g_status = 0;
-	if (cmds && cmds->command && ft_strcmp(cmds->command, "\\n") == 0
-		&& !cmds->next && !cmds->args && !cmds->redirs)
+	if ((!cmds && !((*data)->tokens)) || (cmds && cmds->command
+			&& ft_strcmp(cmds->command, "\\n") == 0 && !cmds->next))
 		return ;
 	if (!cmds || !prepare_heredoc(cmds, (*data)->envs))
 		return ;
-	(signal(SIGINT, SIG_IGN), signal(SIGQUIT, SIG_IGN));
+	ignore_signals();
 	if (!cmds->next && check_built_parent(cmds, data))
 		return ;
 	if (init_bf_execute(cmds, &cmd, &pids, &fd_in) == -1)
 		return ;
-	(i = -1, fd_in = STDIN_FILENO);
-	while (cmd)
-	{
-		(pipefd[0] = -1, pipefd[1] = -1);
-		if (cmd->next && !set_pipe(pipefd))
-		{
-			if (fd_in != STDIN_FILENO)
-				close(fd_in);
-			free(pids);
-			return ;
-		}
-		pids[++i] = fork();
-		if (pids[i] < 0)
-		{
-			if (cmd->next)
-				(close(pipefd[0]), close(pipefd[1]));
-			if (fd_in != STDIN_FILENO)
-				close(fd_in);
-			free(pids);
-			return ;
-		}
-		if (pids[i] == 0)
-			(dup2_close(fd_in, cmd, pipefd[0], pipefd[1]),
-				fork_child_do(cmd, data));
-		else
-			fork_parent_do(&fd_in, cmd, pipefd[0], pipefd[1]);
-		cmd = cmd->next;
-	}
-	(ft_wait_child(cmds, pids), free(pids), signal(SIGINT, handle_signal),
-	 signal(SIGQUIT, handle_signal));
+	fd_in = STDIN_FILENO;
+	run_pipeline_loop(data, cmd, pids, &fd_in);
+	ft_wait_child(cmds, pids);
+	free(pids);
+	signal(SIGINT, handle_signal);
+	signal(SIGQUIT, handle_signal);
 }

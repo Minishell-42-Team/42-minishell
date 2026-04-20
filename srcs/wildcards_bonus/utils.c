@@ -22,7 +22,10 @@ int	add_new_arg(t_list **args, char *content, int *count)
 		return (0);
 	new = ft_lstnew(data);
 	if (!new)
-		return (perror("malloc"), 0);
+	{
+		perror("malloc");
+		return (0);
+	}
 	ft_lstadd_back(args, new);
 	if (count)
 		*count = *count + 1;
@@ -31,16 +34,34 @@ int	add_new_arg(t_list **args, char *content, int *count)
 
 int	is_dir(const char *path)
 {
-	struct	stat	info;
+	struct stat	info;
 
 	if (stat(path, &info) != 0)
 		return (0);
 	return (S_ISDIR(info.st_mode));
 }
 
+int	is_p_dir(char *path)
+{
+	return (ft_strcmp(path, "..") == 0 || ft_strcmp(path, ".") == 0);
+}
 
 void	get_pathname(char *path, const char *entry)
 {
 	ft_strlcat(path, "/", 255);
 	ft_strlcat(path, entry, 255);
+}
+
+int	has_quotes(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == '\'' || str[i] == '"')
+			return (1);
+		i++;
+	}
+	return (0);
 }
