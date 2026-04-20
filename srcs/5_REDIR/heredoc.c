@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 13:59:45 by clwenhaj          #+#    #+#             */
-/*   Updated: 2026/04/13 17:53:25 by clwenhaj         ###   ########.fr       */
+/*   Updated: 2026/04/20 18:32:17 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,8 +59,7 @@ static void	heredoc_child(int pipefd_out, const char *delim, int q,
 {
 	char	*line;
 
-	signal(SIGINT, SIG_DFL);
-	signal(SIGQUIT, SIG_IGN);
+	(signal(SIGINT, SIG_DFL), signal(SIGQUIT, SIG_IGN));
 	while (1)
 	{
 		line = readline("> ");
@@ -68,8 +67,7 @@ static void	heredoc_child(int pipefd_out, const char *delim, int q,
 		{
 			ft_putstr_fd("Minishell: warning: ", 2);
 			ft_putstr_fd("heredoc delimited by EOF\n", 2);
-			close(pipefd_out);
-			ft_clean_all(data);
+			(close(pipefd_out), ft_clean_all(data));
 			exit(0);
 		}
 		if (ft_strcmp(line, delim) == 0)
@@ -81,8 +79,7 @@ static void	heredoc_child(int pipefd_out, const char *delim, int q,
 		}
 		if (!q)
 			line = expand_line(line, (*data)->envs);
-		ft_putendl_fd(line, pipefd_out);
-		free(line);
+		(ft_putendl_fd(line, pipefd_out), free(line));
 	}
 }
 
