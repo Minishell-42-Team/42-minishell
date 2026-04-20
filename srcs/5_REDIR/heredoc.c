@@ -55,7 +55,7 @@ static char	*expand_line(char *line, t_env_var *envs)
 }
 
 static void	heredoc_child(int pipefd_out, const char *delim, int q,
-		t_env_var *ev)
+		t_minishell_data **data)
 {
 	char	*line;
 
@@ -69,22 +69,24 @@ static void	heredoc_child(int pipefd_out, const char *delim, int q,
 			ft_putstr_fd("Minishell: warning: ", 2);
 			ft_putstr_fd("heredoc delimited by EOF\n", 2);
 			close(pipefd_out);
+			ft_clean_all(data);
 			exit(0);
 		}
 		if (ft_strcmp(line, delim) == 0)
 		{
 			free(line);
 			close(pipefd_out);
+			ft_clean_all(data);
 			exit(0);
 		}
 		if (!q)
-			line = expand_line(line, ev);
+			line = expand_line(line, (*data)->envs);
 		ft_putendl_fd(line, pipefd_out);
 		free(line);
 	}
 }
 
-int	handle_heredoc(const char *delimiter, int quoted, t_env_var *envs)
+int	handle_heredoc(const char *delimiter, int quoted, t_minishell_data **data)
 {
 	int		pipefd[2];
 	pid_t	pid;
@@ -98,7 +100,7 @@ int	handle_heredoc(const char *delimiter, int quoted, t_env_var *envs)
 	if (pid == 0)
 	{
 		close(pipefd[0]);
-		heredoc_child(pipefd[1], delimiter, quoted, envs);
+		heredoc_child(pipefd[1], delimiter, quoted, data);
 	}
 	close(pipefd[1]);
 	waitpid(pid, &status, 0);

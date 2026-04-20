@@ -44,6 +44,7 @@ static int	get_execdirs(char *path, t_list **execdirs)
 
 	if (!path)
 		return (0);
+	ft_lstclear(execdirs, free);
 	dirs = ft_split(path, ':');
 	if (!dirs)
 		return (0);

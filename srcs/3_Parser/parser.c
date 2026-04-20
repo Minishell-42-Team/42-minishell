@@ -84,7 +84,7 @@ static t_command_ast	*get_commands(t_token *tokens)
 
 static void	handle_parser_error(t_token *tokens, t_command_ast *cmds)
 {
-	free(cmds);
+	ft_free_command(&cmds);
 	g_status = 2;
 	if (tokens && is_type_redir(tokens) && !tokens->next)
 		ft_putstr_fd(TOKEN_MSG, 2);

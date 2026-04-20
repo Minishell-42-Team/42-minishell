@@ -113,7 +113,7 @@ void	execute_pipeline(t_command_ast *cmds, t_minishell_data **data)
 	if ((!cmds && !((*data)->tokens)) || (cmds && cmds->command
 			&& ft_strcmp(cmds->command, "\\n") == 0 && !cmds->next))
 		return ;
-	if (!cmds || !prepare_heredoc(cmds, (*data)->envs))
+	if (!cmds || !prepare_heredoc(cmds, data))
 		return ;
 	ignore_signals();
 	if (!cmds->next && check_built_parent(cmds, data))

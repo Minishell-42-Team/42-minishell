@@ -96,22 +96,37 @@ void	fork_child_do(t_command_ast *command, t_minishell_data **data)
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
 	if (!apply_redirections(command->redirs))
+	{
+		ft_clean_all(data);
 		exit(EXIT_FAILURE);
+	}
 	clean_quotes_command(command);
 	if (!command->command)
+	{
+		ft_clean_all(data);
 		exit(EXIT_SUCCESS);
+	}
 	if (exec_builtin(command, data))
-		exit(g_status);
+	{
+		len = g_status;
+		ft_clean_all(data);
+		exit(len);
+	}
 	args = get_args(command, data, &len);
 	if (!args)
 	{
+		len = 127;
 		if (is_dir(command->command))
-			exit(126);
-		exit(127);
+			len = 126;
+		ft_clean_all(data);
+		exit(len);
 	}
 	envp = env_to_array((*data)->envs);
 	execve(args[0], args, envp);
 	perror("execve");
+	ft_free_table(&args, len + 1);
+	ft_free_table(&envp, len + 1);
+	ft_clean_all(data);
 	exit(127);
 }
 
