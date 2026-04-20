@@ -6,7 +6,7 @@
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 13:06:54 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/20 13:16:37 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/20 15:50:19 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,8 @@ int		ft_unset(t_env_var **env_vars, char *key);
 int		ft_env(t_env_var *envs);
 char	**env_to_array(t_env_var *env_vars);
 void	ft_free_table(char ***table, int len);
-//int		ft_cd(char *args, t_env_var *envp);
-//int		ft_echo(t_list *args);
+int		ft_cd(char *args, t_env_var *envp);
+int		ft_echo(t_list *args);
 int		ft_pwd(void);
 int		ft_check_builtin_must_not_fork(char *command);
 int		find_pos_equal(char *arg);

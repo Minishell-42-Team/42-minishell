@@ -6,7 +6,7 @@
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/19 16:00:00 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/19 16:00:00 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/20 16:49:20 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ void	ft_wait_child(t_command_ast *cmd, pid_t *pids)
 
 	node = cmd;
 	i = 0;
+	status = 0;
 	if (!pids)
 		return ;
 	while (node)

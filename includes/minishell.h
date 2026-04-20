@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 15:44:47 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/20 12:48:55 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/20 16:00:40 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,7 +141,6 @@ int				get_fdout(t_command_ast *cmd);
 int				open_file(t_redir_file *redir);
 int				exec_builtin(t_command_ast *cmd, t_minishell_data **data);
 int				exec_simple_builtin_2(t_command_ast *cmd);
-int				ft_cd_builtin(t_command_ast *cmd, t_minishell_data **data);
 int				get_matched_args(t_command_ast *cmd);
 void			ft_free_arg(t_list **head, t_list **node_to_free);
 void			handle_fork_signal(int sig);
