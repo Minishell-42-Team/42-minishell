@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/23 23:49:38 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/20 18:42:07 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/21 09:35:38 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,8 @@ static void	run_pipeline_loop(t_minishell_data **data, t_command_ast *cmd,
 		{
 			free(pids);
 			dup2_close(*fd_in, cmd, p[0], p[1]);
-			fork_child_do(cmd, data);
+			if (cmd->command)
+				fork_child_do(cmd, data);
 		}
 		fork_parent_do(fd_in, cmd, p[0], p[1]);
 		cmd = cmd->next;
