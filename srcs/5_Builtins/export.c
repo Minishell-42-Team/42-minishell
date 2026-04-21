@@ -6,7 +6,7 @@
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/16 12:57:08 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/20 13:08:50 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/20 18:29:28 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ static int	get_execdirs(char *path, t_list **execdirs)
 
 	if (!path)
 		return (0);
+	ft_lstclear(execdirs, free);
 	dirs = ft_split(path, ':');
 	if (!dirs)
 		return (0);
@@ -54,9 +55,7 @@ static int	get_execdirs(char *path, t_list **execdirs)
 		{
 			while (dirs[i])
 				free(dirs[i++]);
-			free(dirs);
-			ft_lstclear(execdirs, free);
-			return (0);
+			return (free(dirs), ft_lstclear(execdirs, free), 0);
 		}
 	}
 	i = -1;

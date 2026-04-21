@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 23:18:10 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/21 14:35:10 by clwenhaj         ###   ########.fr       */
+/*   Updated: 2026/04/21 15:06:49 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,26 +92,36 @@ void	fork_child_do(t_command_ast *command, t_minishell_data **data)
 	char	**args;
 	char	**envp;
 	int		len;
+	int		stdin_save;
+	int		stdout_save;
 
-	signal(SIGINT, SIG_DFL);
-	signal(SIGQUIT, SIG_DFL);
+	(signal(SIGINT, SIG_DFL), signal(SIGQUIT, SIG_DFL));
+	stdin_save = dup(STDIN_FILENO);
+	stdout_save = dup(STDOUT_FILENO);
 	if (!apply_redirections(command->redirs))
-		exit(EXIT_FAILURE);
+		(restore_io(stdin_save, stdout_save),
+			ft_clean_all(data), exit(EXIT_FAILURE));
+	clean_quotes_command(command);
 	if (!command->command)
-		exit(EXIT_SUCCESS);
+		(ft_clean_all(data), exit(EXIT_SUCCESS));
 	if (exec_builtin(command, data))
-		exit(g_status);
+	{
+		len = g_status;
+		(ft_clean_all(data), exit(len));
+	}
 	args = get_args(command, data, &len);
 	if (!args)
 	{
+		len = 127;
 		if (is_dir(command->command))
-			exit(126);
-		exit(127);
+			len = 126;
+		(ft_clean_all(data), exit(len));
 	}
 	envp = env_to_array((*data)->envs);
 	execve(args[0], args, envp);
 	perror("execve");
-	exit(127);
+	(ft_free_table(&args, len + 1), restore_io(stdin_save, stdout_save),
+		ft_free_table(&envp, len + 1), ft_clean_all(data), exit(127));
 }
 
 void	fork_parent_do(int *fd_in, t_command_ast *cmd, int p_in, int p_out)

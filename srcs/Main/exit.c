@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 02:03:34 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/16 15:15:19 by clwenhaj         ###   ########.fr       */
+/*   Updated: 2026/04/20 16:45:00 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,18 @@ static int	ft_is_onlydigit(char *str)
 	return (1);
 }
 
+void	ft_clean_all(t_minishell_data **data)
+{
+	if (!data || !*data)
+		return ;
+	ft_free_command(&(*data)->cmds);
+	free_tokens(&(*data)->tokens);
+	ft_free_envs(&(*data)->envs);
+	ft_lstclear(&(*data)->execdirs, free);
+	free(*data);
+	*data = NULL;
+}
+
 int	ft_exit(t_command_ast *cmd, t_minishell_data **data)
 {
 	if (cmd && ft_lstsize(cmd->args) > 1)
@@ -43,11 +55,7 @@ int	ft_exit(t_command_ast *cmd, t_minishell_data **data)
 	}
 	if (cmd->args)
 		g_status = ft_atoi((char *)cmd->args->content) % 255;
-	ft_free_command(&(*data)->cmds);
-	free_tokens(&(*data)->tokens);
-	ft_free_envs(&(*data)->envs);
-	ft_lstclear(&(*data)->execdirs, free);
-	free(*data);
 	printf("exit\n");
+	ft_clean_all(data);
 	exit(g_status);
 }

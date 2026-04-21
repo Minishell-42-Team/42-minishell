@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/23 23:49:38 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/20 16:44:36 by clwenhaj         ###   ########.fr       */
+/*   Updated: 2026/04/21 09:35:38 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,7 @@ static void	run_pipeline_loop(t_minishell_data **data, t_command_ast *cmd,
 		pids[++i] = fork();
 		if (pids[i] == 0)
 		{
+			free(pids);
 			dup2_close(*fd_in, cmd, p[0], p[1]);
 			if (cmd->command)
 				fork_child_do(cmd, data);
@@ -114,7 +115,7 @@ void	execute_pipeline(t_command_ast *cmds, t_minishell_data **data)
 	if ((!cmds && !((*data)->tokens)) || (cmds && cmds->command
 			&& ft_strcmp(cmds->command, "\\n") == 0 && !cmds->next))
 		return ;
-	if (!cmds || !prepare_heredoc(cmds, (*data)->envs))
+	if (!cmds || !prepare_heredoc(cmds, data))
 		return ;
 	ignore_signals();
 	if (!cmds->next && check_built_parent(cmds, data))

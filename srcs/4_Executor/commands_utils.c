@@ -46,7 +46,7 @@ void	ft_wait_child(t_command_ast *cmd, pid_t *pids)
 	}
 }
 
-int	prepare_heredoc(t_command_ast *cmds, t_env_var *envs)
+int	prepare_heredoc(t_command_ast *cmds, t_minishell_data **data)
 {
 	t_command_ast	*cmd;
 	t_redir_file	*redir;
@@ -60,7 +60,7 @@ int	prepare_heredoc(t_command_ast *cmds, t_env_var *envs)
 			if (redir->type == HEREDOC)
 			{
 				redir->heredoc_fd = handle_heredoc(redir->file,
-						redir->quoted, envs);
+						redir->quoted, data);
 				if (redir->heredoc_fd < 0)
 					return (g_status = 130, 0);
 			}

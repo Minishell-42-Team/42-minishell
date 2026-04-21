@@ -119,11 +119,12 @@ char			*expand_variable(const char *s, int *p, t_env_var *ev);
 void			ft_free(void **nptr);
 int				affect_command_param(t_command_ast *cmd, t_token *t);
 int				ft_exit(t_command_ast *cmd, t_minishell_data **data);
+void			ft_clean_all(t_minishell_data **data);
 int				apply_redirections(t_redir_file *redir);
 int				handle_heredoc(const char *delim, int quoted,
-					t_env_var *envs);
+					t_minishell_data **data);
 void			ft_wait_child(t_command_ast *cmd, pid_t *pids);
-int				prepare_heredoc(t_command_ast *cmds, t_env_var *envs);
+int				prepare_heredoc(t_command_ast *cmds, t_minishell_data **data);
 void			ft_free_table(char ***table, int len);
 void			fork_child_do(t_command_ast *command, t_minishell_data **data);
 void			fork_parent_do(int *fd_in, t_command_ast *cmd,
