@@ -6,48 +6,26 @@
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/19 12:00:00 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/19 12:00:00 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/21 13:52:10 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void	handle_quote_char(char *str, int *idx, char *quote, char *res)
-{
-	if ((str[idx[0]] == '\'' || str[idx[0]] == '"') && *quote == 0)
-	{
-		*quote = str[idx[0]];
-		idx[0]++;
-	}
-	else if (str[idx[0]] == *quote)
-	{
-		*quote = 0;
-		idx[0]++;
-	}
-	else
-	{
-		res[idx[1]] = str[idx[0]];
-		idx[1]++;
-		idx[0]++;
-	}
-}
-
 char	*remove_quotes(char *str)
 {
 	char	*res;
-	int		idx[2];
-	char	quote;
+	char	quote[2];
 
 	if (!str)
 		return (NULL);
-	res = malloc(ft_strlen(str) + 1);
-	if (!res)
-		return (NULL);
-	idx[0] = 0;
-	idx[1] = 0;
-	quote = 0;
-	while (str[idx[0]])
-		handle_quote_char(str, idx, &quote, res);
-	res[idx[1]] = '\0';
+	quote[0] = 0;
+	quote[1] = 0;
+	if (str[0] == '"' || str[0] == '\'')
+		quote[0] = str[0];
+	if (quote[0])
+		res = ft_strtrim(str, quote);
+	else
+		res = ft_strdup(str);
 	return (res);
 }

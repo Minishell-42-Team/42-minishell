@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/10 04:51:52 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/20 17:04:31 by clwenhaj         ###   ########.fr       */
+/*   Updated: 2026/04/21 12:20:33 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,12 +75,12 @@ static t_command_ast	*get_commands(t_token *tokens)
 			return (NULL);
 		}
 		current_cmd = current_cmd->next;
-	}arser 
+	}
 	if (!curr_token)
 		return (cmds);
 	ft_free_command(&cmds);
 	return (NULL);
-arser }
+}
 
 static void	handle_parser_error(t_token *tokens, t_command_ast *cmds)
 {

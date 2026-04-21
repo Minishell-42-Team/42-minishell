@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 23:18:10 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/20 15:33:42 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/21 14:35:10 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,6 @@ void	fork_child_do(t_command_ast *command, t_minishell_data **data)
 	signal(SIGQUIT, SIG_DFL);
 	if (!apply_redirections(command->redirs))
 		exit(EXIT_FAILURE);
-	clean_quotes_command(command);
 	if (!command->command)
 		exit(EXIT_SUCCESS);
 	if (exec_builtin(command, data))

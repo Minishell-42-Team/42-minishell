@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/10 09:33:54 by clwenhaj          #+#    #+#             */
-/*   Updated: 2026/04/13 15:35:09 by clwenhaj         ###   ########.fr       */
+/*   Updated: 2026/04/21 14:31:56 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,8 @@ static char	*process_dollar(char *str, int *i, t_env_var *envs)
 	int	k;
 
 	k = *i + 1;
-	while (str[k] == '"' || str[k] == '\'')
-		k++;
+	if (str[k] == '"' || str[k] == '\'')
+		return (NULL);
 	if (str[k] && (ft_isalnum(str[k]) || str[k] == '_' || str[k] == '?'))
 	{
 		*i = k;
