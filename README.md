@@ -68,6 +68,7 @@ Examples: echo Hello World
 - [General Overview 1](https://medium.com/@gibrat.dylan/minishell-42-lart-de-cr%C3%A9er-un-shell-performant-et-maintenable-53c0aede140e)
 - [General Overview 2](https://www.notion.so/minishell-quelques-vieilles-astuces-de-grand-m-re-2fe0b3dc40f280c88099cb289a9210c3)
 - [General Overview 3](https://medium.com/@mostafa.omrane/mes-conseils-si-je-devais-recommencer-minishell-a9783c51ba1b)
+- [General Commands](https://docs.google.com/spreadsheets/d/1FxfG_p_mxK8eFPgqDhq_4E8PlybEdM_MNZgGnfBHZHE/edit?gid=0#gid=0)
 
 <u>**AI**</u> has been used to:
 - Clarifying concepts related to process management and file descriptors

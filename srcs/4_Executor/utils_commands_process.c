@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 23:18:10 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/21 15:06:49 by clwenhaj         ###   ########.fr       */
+/*   Updated: 2026/04/21 17:51:17 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,8 @@ int	check_built_parent(t_command_ast *cmd, t_minishell_data **data)
 			&& ft_strcmp(cmd->command, "cd") != 0))
 		return (0);
 	if (ft_strcmp(cmd->command, "exit") == 0)
-		exec_builtin(cmd, data);
+		if (exec_builtin(cmd, data))
+			return (1);
 	stdin_save = dup(STDIN_FILENO);
 	stdout_save = dup(STDOUT_FILENO);
 	if (!apply_redirections(cmd->redirs))
@@ -101,13 +102,12 @@ void	fork_child_do(t_command_ast *command, t_minishell_data **data)
 	if (!apply_redirections(command->redirs))
 		(restore_io(stdin_save, stdout_save),
 			ft_clean_all(data), exit(EXIT_FAILURE));
-	clean_quotes_command(command);
 	if (!command->command)
 		(ft_clean_all(data), exit(EXIT_SUCCESS));
 	if (exec_builtin(command, data))
 	{
 		len = g_status;
-		(ft_clean_all(data), exit(len));
+		(restore_io(stdin_save, stdout_save), ft_clean_all(data), exit(len));
 	}
 	args = get_args(command, data, &len);
 	if (!args)
