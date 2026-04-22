@@ -91,3 +91,28 @@ void	ignore_signals(void)
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
 }
+
+void	close_all_heredocs(t_command_ast *cmds, t_command_ast *current_cmd)
+{
+	t_command_ast	*cmd;
+	t_redir_file	*redir;
+
+	cmd = cmds;
+	while (cmd)
+	{
+		redir = cmd->redirs;
+		while (redir)
+		{
+			if (redir->type == HEREDOC && redir->heredoc_fd != -1)
+			{
+				if (cmd != current_cmd)
+				{
+					close(redir->heredoc_fd);
+					redir->heredoc_fd = -1;
+				}
+			}
+			redir = redir->next;
+		}
+		cmd = cmd->next;
+	}
+}

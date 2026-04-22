@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 23:18:10 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/21 15:06:49 by clwenhaj         ###   ########.fr       */
+/*   Updated: 2026/04/21 18:16:34 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,14 +71,12 @@ int	check_built_parent(t_command_ast *cmd, t_minishell_data **data)
 			&& ft_strcmp(cmd->command, "cd") != 0))
 		return (0);
 	if (ft_strcmp(cmd->command, "exit") == 0)
-		exec_builtin(cmd, data);
+		if (exec_builtin(cmd, data))
+			return (1);
 	stdin_save = dup(STDIN_FILENO);
 	stdout_save = dup(STDOUT_FILENO);
 	if (!apply_redirections(cmd->redirs))
-	{
-		restore_io(stdin_save, stdout_save);
-		return (1);
-	}
+		return (restore_io(stdin_save, stdout_save), 1);
 	clean_quotes_command(cmd);
 	ret = exec_builtin(cmd, data);
 	restore_io(stdin_save, stdout_save);
@@ -86,24 +84,23 @@ int	check_built_parent(t_command_ast *cmd, t_minishell_data **data)
 		ft_exit(cmd, data);
 	return (1);
 }
-
 void	fork_child_do(t_command_ast *command, t_minishell_data **data)
 {
 	char	**args;
 	char	**envp;
 	int		len;
-	int		stdin_save;
-	int		stdout_save;
 
 	(signal(SIGINT, SIG_DFL), signal(SIGQUIT, SIG_DFL));
-	stdin_save = dup(STDIN_FILENO);
-	stdout_save = dup(STDOUT_FILENO);
-	if (!apply_redirections(command->redirs))
-		(restore_io(stdin_save, stdout_save),
-			ft_clean_all(data), exit(EXIT_FAILURE));
-	clean_quotes_command(command);
+	close_all_heredocs((*data)->cmds, command);
 	if (!command->command)
+	{
+		if (!apply_redirections(command->redirs))
+			(ft_clean_all(data), exit(EXIT_FAILURE));
 		(ft_clean_all(data), exit(EXIT_SUCCESS));
+	}
+	if (!apply_redirections(command->redirs))
+		(ft_clean_all(data), exit(EXIT_FAILURE));
+	clean_quotes_command(command);
 	if (exec_builtin(command, data))
 	{
 		len = g_status;
@@ -120,10 +117,9 @@ void	fork_child_do(t_command_ast *command, t_minishell_data **data)
 	envp = env_to_array((*data)->envs);
 	execve(args[0], args, envp);
 	perror("execve");
-	(ft_free_table(&args, len + 1), restore_io(stdin_save, stdout_save),
+	(ft_free_table(&args, len + 1),
 		ft_free_table(&envp, len + 1), ft_clean_all(data), exit(127));
 }
-
 void	fork_parent_do(int *fd_in, t_command_ast *cmd, int p_in, int p_out)
 {
 	if (*fd_in != STDIN_FILENO)

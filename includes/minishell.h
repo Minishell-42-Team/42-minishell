@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 15:44:47 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/20 16:00:40 by clwenhaj         ###   ########.fr       */
+/*   Updated: 2026/04/21 17:17:33 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,6 +125,7 @@ int				handle_heredoc(const char *delim, int quoted,
 					t_minishell_data **data);
 void			ft_wait_child(t_command_ast *cmd, pid_t *pids);
 int				prepare_heredoc(t_command_ast *cmds, t_minishell_data **data);
+void			close_all_heredocs(t_command_ast *cmds, t_command_ast *current_cmd);
 void			ft_free_table(char ***table, int len);
 void			fork_child_do(t_command_ast *command, t_minishell_data **data);
 void			fork_parent_do(int *fd_in, t_command_ast *cmd,
