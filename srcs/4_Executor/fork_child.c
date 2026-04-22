@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils_commands_process.c                           :+:      :+:    :+:   */
+/*   fork_child.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/19 23:18:10 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/21 17:51:17 by clwenhaj         ###   ########.fr       */
+/*   Created: 2026/04/22 11:46:36 by clwenhaj          #+#    #+#             */
+/*   Updated: 2026/04/22 14:35:03 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,33 +59,26 @@ static char	**get_args(t_command_ast *command, t_minishell_data **data,
 	return (fill_args(command, access_link, *len));
 }
 
-int	check_built_parent(t_command_ast *cmd, t_minishell_data **data)
+static void	handle_builtin_exit(int stdin_save, int stdout_save,
+			t_minishell_data **data)
 {
-	int	stdin_save;
-	int	stdout_save;
-	int	ret;
+	int	len;
 
-	if (!cmd->command || (ft_strcmp(cmd->command, "export") != 0
-			&& ft_strcmp(cmd->command, "unset") != 0
-			&& ft_strcmp(cmd->command, "exit") != 0
-			&& ft_strcmp(cmd->command, "cd") != 0))
-		return (0);
-	if (ft_strcmp(cmd->command, "exit") == 0)
-		if (exec_builtin(cmd, data))
-			return (1);
-	stdin_save = dup(STDIN_FILENO);
-	stdout_save = dup(STDOUT_FILENO);
-	if (!apply_redirections(cmd->redirs))
-	{
-		restore_io(stdin_save, stdout_save);
-		return (1);
-	}
-	clean_quotes_command(cmd);
-	ret = exec_builtin(cmd, data);
+	len = g_status;
 	restore_io(stdin_save, stdout_save);
-	if (ret == 2)
-		ft_exit(cmd, data);
-	return (1);
+	ft_clean_all(data);
+	exit(len);
+}
+
+static void	handle_no_args(t_command_ast *command, t_minishell_data **data)
+{
+	int	len;
+
+	len = 127;
+	if (is_dir(command->command))
+		len = 126;
+	ft_clean_all(data);
+	exit(len);
 }
 
 void	fork_child_do(t_command_ast *command, t_minishell_data **data)
@@ -96,44 +89,23 @@ void	fork_child_do(t_command_ast *command, t_minishell_data **data)
 	int		stdin_save;
 	int		stdout_save;
 
-	(signal(SIGINT, SIG_DFL), signal(SIGQUIT, SIG_DFL));
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
 	stdin_save = dup(STDIN_FILENO);
 	stdout_save = dup(STDOUT_FILENO);
 	if (!apply_redirections(command->redirs))
-		(restore_io(stdin_save, stdout_save),
+		return (restore_io(stdin_save, stdout_save),
 			ft_clean_all(data), exit(EXIT_FAILURE));
 	if (!command->command)
-		(ft_clean_all(data), exit(EXIT_SUCCESS));
+		return (ft_clean_all(data), exit(EXIT_SUCCESS));
 	if (exec_builtin(command, data))
-	{
-		len = g_status;
-		(restore_io(stdin_save, stdout_save), ft_clean_all(data), exit(len));
-	}
+		handle_builtin_exit(stdin_save, stdout_save, data);
 	args = get_args(command, data, &len);
 	if (!args)
-	{
-		len = 127;
-		if (is_dir(command->command))
-			len = 126;
-		(ft_clean_all(data), exit(len));
-	}
+		handle_no_args(command, data);
 	envp = env_to_array((*data)->envs);
 	execve(args[0], args, envp);
 	perror("execve");
 	(ft_free_table(&args, len + 1), restore_io(stdin_save, stdout_save),
 		ft_free_table(&envp, len + 1), ft_clean_all(data), exit(127));
-}
-
-void	fork_parent_do(int *fd_in, t_command_ast *cmd, int p_in, int p_out)
-{
-	if (*fd_in != STDIN_FILENO)
-		close(*fd_in);
-	if (cmd->next)
-	{
-		if (p_out != -1)
-			close(p_out);
-		*fd_in = p_in;
-	}
-	else if (p_in != -1)
-		close(p_in);
 }

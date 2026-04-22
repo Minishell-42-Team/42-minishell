@@ -21,11 +21,11 @@ The program **reads user input, processes it through several stages (lexing, par
 
 - Execution of basic commands (ls, cat, etc.)
 - Builtins: cd, echo, pwd, export, unset, env, exit
-- Pipes (|)
+- Pipes ( | )
 - Redirections (<, >, >>, <<)
-- Environment variable expansion ($VAR, $?)
+- Environment variable expansion (`$VAR`, `$?`)
 - Wildcard expansion (*)
-- Signal handling (Ctrl+C, Ctrl+D, Ctrl+\)
+- Signal handling (Ctrl+C, Ctrl+D, Ctrl+`\`)
 
 ### Architecture Overview
 
@@ -52,11 +52,6 @@ make clean  # Deletes objs
 make fclean # Deletes objs and executable
 make re     # Cleans and recompiles
 ```
-Examples: echo Hello World
-          ls -l | grep minishell
-          cat file.txt > output.txt
-          echo $USER
-          ls *.c
 
 ### Resources
 
@@ -82,7 +77,7 @@ Examples: echo Hello World
 
 * <u>**Memory Management**</u>
 - All allocated memory is properly freed
-- No memory leaks (tested with Valgrind)
+- No memory leaks (tested with valgrind --suppressions=readline.supp --leak-check=full --show-leak-kinds=all --track-origins=yes --track-fds=yes -s)
 
 * <u>**Signals**</u>
 - Ctrl+C → interrupts current input and displays a new prompt
