@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 23:18:10 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/20 18:52:59 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/21 14:45:48 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ void	fork_child_do(t_command_ast *command, t_minishell_data **data)
 	if (exec_builtin(command, data))
 	{
 		len = g_status;
-		(ft_clean_all(data), exit(len));
+		(restore_io(stdin_save, stdout_save), ft_clean_all(data), exit(len));
 	}
 	args = get_args(command, data, &len);
 	if (!args)
