@@ -6,11 +6,16 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 15:54:24 by clwenhaj          #+#    #+#             */
-/*   Updated: 2026/04/17 14:53:53 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/21 15:43:29 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void	affect_status(int *status, int s)
+{
+	*status = s;
+}
 
 static char	*read_word(t_data *data)
 {
@@ -31,7 +36,8 @@ static char	*read_word(t_data *data)
 			if (data->line[data->pos] == quote)
 				buffer[buf_pos++] = data->line[data->pos++];
 			else
-				return (ft_putstr_fd("Minishell: unclosed quote\n", 2), NULL);
+				return (affect_status(&g_status, 1),
+					ft_putstr_fd("Minishell: unclosed quote\n", 2), NULL);
 		}
 		else
 			buffer[buf_pos++] = data->line[data->pos++];
@@ -82,7 +88,7 @@ static int	lexer_loop(t_data *data, t_token **tokens)
 		else
 			word = read_word(data);
 		if (!word)
-			return (free_tokens(tokens), 0);
+			return (affect_status(&g_status, 1), free_tokens(tokens), 0);
 		add_token(tokens, new_token(type, word));
 		free(word);
 		if (type != WORD)

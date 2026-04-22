@@ -21,11 +21,11 @@ The program **reads user input, processes it through several stages (lexing, par
 
 - Execution of basic commands (ls, cat, etc.)
 - Builtins: cd, echo, pwd, export, unset, env, exit
-- Pipes (|)
+- Pipes ( | )
 - Redirections (<, >, >>, <<)
-- Environment variable expansion ($VAR, $?)
+- Environment variable expansion (`$VAR`, `$?`)
 - Wildcard expansion (*)
-- Signal handling (Ctrl+C, Ctrl+D, Ctrl+\)
+- Signal handling (Ctrl+C, Ctrl+D, Ctrl+`\`)
 
 ### Architecture Overview
 
@@ -52,11 +52,6 @@ make clean  # Deletes objs
 make fclean # Deletes objs and executable
 make re     # Cleans and recompiles
 ```
-Examples: echo Hello World
-          ls -l | grep minishell
-          cat file.txt > output.txt
-          echo $USER
-          ls *.c
 
 ### Resources
 
@@ -68,6 +63,7 @@ Examples: echo Hello World
 - [General Overview 1](https://medium.com/@gibrat.dylan/minishell-42-lart-de-cr%C3%A9er-un-shell-performant-et-maintenable-53c0aede140e)
 - [General Overview 2](https://www.notion.so/minishell-quelques-vieilles-astuces-de-grand-m-re-2fe0b3dc40f280c88099cb289a9210c3)
 - [General Overview 3](https://medium.com/@mostafa.omrane/mes-conseils-si-je-devais-recommencer-minishell-a9783c51ba1b)
+- [General Commands](https://docs.google.com/spreadsheets/d/1FxfG_p_mxK8eFPgqDhq_4E8PlybEdM_MNZgGnfBHZHE/edit?gid=0#gid=0)
 
 <u>**AI**</u> has been used to:
 - Clarifying concepts related to process management and file descriptors
@@ -81,7 +77,7 @@ Examples: echo Hello World
 
 * <u>**Memory Management**</u>
 - All allocated memory is properly freed
-- No memory leaks (tested with Valgrind)
+- No memory leaks (tested with valgrind --suppressions=readline.supp --leak-check=full --show-leak-kinds=all --track-origins=yes --track-fds=yes -s)
 
 * <u>**Signals**</u>
 - Ctrl+C → interrupts current input and displays a new prompt
