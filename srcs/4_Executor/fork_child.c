@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/22 11:46:36 by clwenhaj          #+#    #+#             */
-/*   Updated: 2026/04/22 14:35:03 by clwenhaj         ###   ########.fr       */
+/*   Updated: 2026/04/22 16:36:59 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,13 +59,11 @@ static char	**get_args(t_command_ast *command, t_minishell_data **data,
 	return (fill_args(command, access_link, *len));
 }
 
-static void	handle_builtin_exit(int stdin_save, int stdout_save,
-			t_minishell_data **data)
+static void	handle_builtin_exit(t_minishell_data **data)
 {
 	int	len;
 
 	len = g_status;
-	restore_io(stdin_save, stdout_save);
 	ft_clean_all(data);
 	exit(len);
 }
@@ -86,26 +84,21 @@ void	fork_child_do(t_command_ast *command, t_minishell_data **data)
 	char	**args;
 	char	**envp;
 	int		len;
-	int		stdin_save;
-	int		stdout_save;
 
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
-	stdin_save = dup(STDIN_FILENO);
-	stdout_save = dup(STDOUT_FILENO);
 	if (!apply_redirections(command->redirs))
-		return (restore_io(stdin_save, stdout_save),
-			ft_clean_all(data), exit(EXIT_FAILURE));
+		return (ft_clean_all(data), exit(EXIT_FAILURE));
 	if (!command->command)
 		return (ft_clean_all(data), exit(EXIT_SUCCESS));
 	if (exec_builtin(command, data))
-		handle_builtin_exit(stdin_save, stdout_save, data);
+		handle_builtin_exit(data);
 	args = get_args(command, data, &len);
 	if (!args)
 		handle_no_args(command, data);
 	envp = env_to_array((*data)->envs);
 	execve(args[0], args, envp);
 	perror("execve");
-	(ft_free_table(&args, len + 1), restore_io(stdin_save, stdout_save),
+	(ft_free_table(&args, len + 1),
 		ft_free_table(&envp, len + 1), ft_clean_all(data), exit(127));
 }

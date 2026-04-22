@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils_commands_process.c                           :+:      :+:    :+:   */
+/*   fork_parent.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 23:18:10 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/22 11:44:16 by clwenhaj         ###   ########.fr       */
+/*   Updated: 2026/04/22 16:41:33 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,12 +30,12 @@ int	check_built_parent(t_command_ast *cmd, t_minishell_data **data)
 	stdout_save = dup(STDOUT_FILENO);
 	if (!apply_redirections(cmd->redirs))
 	{
-		restore_io(stdin_save, stdout_save);
+		restore_io(&stdin_save, &stdout_save);
 		return (1);
 	}
 	clean_quotes_command(cmd);
 	ret = exec_builtin(cmd, data);
-	restore_io(stdin_save, stdout_save);
+	restore_io(&stdin_save, &stdout_save);
 	if (ret == 2)
 		ft_exit(cmd, data);
 	return (1);

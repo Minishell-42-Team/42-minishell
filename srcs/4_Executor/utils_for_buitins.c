@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/30 13:59:37 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/20 16:02:40 by clwenhaj         ###   ########.fr       */
+/*   Updated: 2026/04/22 13:15:18 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,8 @@ static int	ft_unset_builtin(t_command_ast *cmd, t_minishell_data **data)
 		while (args)
 		{
 			g_status = ft_unset(&(*data)->envs, (char *)args->content);
+			if (ft_strcmp((char *)args->content, "PATH") == 0)
+				ft_lstclear(&(*data)->execdirs, free);
 			args = args->next;
 		}
 		return (1);
