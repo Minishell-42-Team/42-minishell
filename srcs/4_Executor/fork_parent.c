@@ -6,13 +6,13 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 23:18:10 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/22 16:33:34 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/22 16:58:00 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	check_built_parent(t_command_ast *cmd, t_minishell_data **data)
+int	check_built_parent(t_command_ast *cmd, t_minishell_data **data, int pid)
 {
 	int	stdin_save;
 	int	stdout_save;
@@ -24,7 +24,7 @@ int	check_built_parent(t_command_ast *cmd, t_minishell_data **data)
 			&& ft_strcmp(cmd->command, "cd") != 0))
 		return (0);
 	if (ft_strcmp(cmd->command, "exit") == 0)
-		if (exec_builtin(cmd, data))
+		if (exec_builtin(cmd, data, pid))
 			return (1);
 	stdin_save = dup(STDIN_FILENO);
 	stdout_save = dup(STDOUT_FILENO);
@@ -34,10 +34,10 @@ int	check_built_parent(t_command_ast *cmd, t_minishell_data **data)
 		return (1);
 	}
 	clean_quotes_command(cmd);
-	ret = exec_builtin(cmd, data);
+	ret = exec_builtin(cmd, data, pid);
 	restore_io(&stdin_save, &stdout_save);
 	if (ret == 2)
-		ft_exit(cmd, data);
+		ft_exit(cmd, data, 1);
 	return (1);
 }
 

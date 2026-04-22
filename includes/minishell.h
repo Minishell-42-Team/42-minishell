@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 15:44:47 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/22 16:27:09 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/22 17:01:28 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ void			restore_io(int *stdin_save, int *stdout_save);
 char			*expand_variable(const char *s, int *p, t_env_var *ev);
 void			ft_free(void **nptr);
 int				affect_command_param(t_command_ast *cmd, t_token *t);
-int				ft_exit(t_command_ast *cmd, t_minishell_data **data);
+int				ft_exit(t_command_ast *cmd, t_minishell_data **data, int pid);
 void			ft_clean_all(t_minishell_data **data);
 int				apply_redirections(t_redir_file *redir);
 int				handle_heredoc(const char *delim, int quoted,
@@ -127,7 +127,8 @@ void			ft_wait_child(t_command_ast *cmd, pid_t *pids);
 int				prepare_heredoc(t_command_ast *cmds, t_minishell_data **data);
 void			close_all_heredocs(t_command_ast *cmds, t_command_ast *current_cmd);
 void			ft_free_table(char ***table, int len);
-void			fork_child_do(t_command_ast *command, t_minishell_data **data);
+void			fork_child_do(t_command_ast *command, t_minishell_data **data,
+					int pid);
 void			fork_parent_do(int *fd_in, t_command_ast *cmd,
 					int p_i, int p_o);
 void			execute_pipeline(t_command_ast *cmds, t_minishell_data **data);
@@ -137,11 +138,13 @@ int				ft_isspace(char c);
 void			ignore_signals(void);
 void			handle_child(t_minishell_data **d, t_command_ast *c, int *p,
 					int f);
-int				check_built_parent(t_command_ast *c, t_minishell_data **d);
+int				check_built_parent(t_command_ast *c, t_minishell_data **d,
+					int pid);
 int				get_fdin(t_command_ast *cmd);
 int				get_fdout(t_command_ast *cmd);
 int				open_file(t_redir_file *redir);
-int				exec_builtin(t_command_ast *cmd, t_minishell_data **data);
+int				exec_builtin(t_command_ast *cmd, t_minishell_data **data,
+					int pid);
 int				exec_simple_builtin_2(t_command_ast *cmd);
 int				get_matched_args(t_command_ast *cmd);
 void			ft_free_arg(t_list **head, t_list **node_to_free);

@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/23 23:49:38 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/22 16:27:43 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/22 17:00:21 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,7 @@ static void	run_pipeline_loop(t_minishell_data **data, t_command_ast *cmd,
 {
 	int	p[2];
 	int	i;
+	int pid;
 
 	i = -1;
 	while (cmd)
@@ -96,9 +97,9 @@ static void	run_pipeline_loop(t_minishell_data **data, t_command_ast *cmd,
 		pids[++i] = fork();
 		if (pids[i] == 0)
 		{
-			dup2_close(*fd_in, cmd, p[0], p[1]);
-			free(pids);
-			fork_child_do(cmd, data);
+			pid = pids[i];
+			(dup2_close(*fd_in, cmd, p[0], p[1]), free(pids));
+			fork_child_do(cmd, data, pid);
 		}
 		fork_parent_do(fd_in, cmd, p[0], p[1]);
 		cmd = cmd->next;
@@ -117,7 +118,7 @@ void	execute_pipeline(t_command_ast *cmds, t_minishell_data **data)
 	if (!cmds || !prepare_heredoc(cmds, data))
 		return ;
 	ignore_signals();
-	if (!cmds->next && check_built_parent(cmds, data))
+	if (!cmds->next && check_built_parent(cmds, data, 1))
 		return ;
 	if (init_bf_execute(cmds, &cmd, &pids, &fd_in) == -1)
 		return ;
