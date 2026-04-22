@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/08 02:00:00 by clwenhaj          #+#    #+#             */
-/*   Updated: 2026/04/13 15:13:06 by clwenhaj         ###   ########.fr       */
+/*   Updated: 2026/04/21 13:42:41 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ static void	clean_quotes_redirs(t_redir_file *redir_node)
 	{
 		if (redir_node->file)
 		{
-			tmp = remove_quotes(redir_node->file);
+			tmp = ft_strtrim(redir_node->file, "\'\"");
 			free(redir_node->file);
 			redir_node->file = tmp;
 		}

@@ -6,7 +6,7 @@
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/19 15:00:00 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/19 15:00:00 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/22 14:22:39 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,10 +53,10 @@ char	**fill_args(t_command_ast *command, char *access_link, int len)
 	return (args);
 }
 
-void	restore_io(int stdin_save, int stdout_save)
+void	restore_io(int *stdin_save, int *stdout_save)
 {
-	dup2(stdin_save, STDIN_FILENO);
-	dup2(stdout_save, STDOUT_FILENO);
-	close(stdin_save);
-	close(stdout_save);
+	dup2(*stdin_save, STDIN_FILENO);
+	dup2(*stdout_save, STDOUT_FILENO);
+	close(*stdin_save);
+	close(*stdout_save);
 }
