@@ -6,7 +6,7 @@
 /*   By: vnaoussi <vnaoussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 14:49:21 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/20 13:13:47 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/24 16:28:01 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@ int	ft_unset(t_env_var **envs, char *key)
 
 	node = *envs;
 	save_node = *envs;
+	if (!key)
+		return (0);
 	if (check_env_and_del(node, key))
 	{
 		*envs = (*envs)->next;
