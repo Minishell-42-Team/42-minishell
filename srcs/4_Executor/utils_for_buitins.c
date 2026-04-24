@@ -6,13 +6,14 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/30 13:59:37 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/22 13:15:18 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/22 16:54:56 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	exec_simple_builtin(t_command_ast *cmd, t_minishell_data **data)
+static int	exec_simple_builtin(t_command_ast *cmd, t_minishell_data **data,
+		int pid)
 {
 	if (ft_strcmp(cmd->command, "env") == 0)
 	{
@@ -31,7 +32,7 @@ static int	exec_simple_builtin(t_command_ast *cmd, t_minishell_data **data)
 	}
 	if (ft_strcmp(cmd->command, "exit") == 0)
 	{
-		g_status = ft_exit(cmd, data);
+		g_status = ft_exit(cmd, data, pid);
 		return (1);
 	}
 	return (0);
@@ -99,11 +100,11 @@ static int	ft_cd_builtin(t_command_ast *cmd, t_minishell_data **data)
 	return (0);
 }
 
-int	exec_builtin(t_command_ast *cmd, t_minishell_data **data)
+int	exec_builtin(t_command_ast *cmd, t_minishell_data **data, int pid)
 {
 	if (!cmd || !cmd->command)
 		return (0);
-	if (exec_simple_builtin(cmd, data)
+	if (exec_simple_builtin(cmd, data, pid)
 		|| exec_simple_builtin_2(cmd)
 		|| ft_export_builtin(cmd, data)
 		|| ft_unset_builtin(cmd, data)
