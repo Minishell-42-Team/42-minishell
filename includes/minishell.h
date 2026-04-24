@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 15:44:47 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/24 12:28:17 by clwenhaj         ###   ########.fr       */
+/*   Updated: 2026/04/24 13:10:20 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,7 +134,8 @@ int				is_operator(char c);
 int				is_quote(char c);
 int				ft_isspace(char c);
 void			ignore_signals(void);
-int				check_built_parent(t_command_ast *c, t_minishell_data **d, int pid);
+int				check_built_parent(t_command_ast *c, t_minishell_data **d,
+					int pid);
 void			handle_child(t_minishell_data **d, t_command_ast *c, int *p,
 					int f);
 int				check_built_parent(t_command_ast *c, t_minishell_data **d,

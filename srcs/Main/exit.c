@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 02:03:34 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/24 12:25:55 by clwenhaj         ###   ########.fr       */
+/*   Updated: 2026/04/24 13:09:46 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,13 +44,16 @@ void	ft_clean_all(t_minishell_data **data)
 
 int	ft_exit(t_command_ast *cmd, t_minishell_data **data, int pid)
 {
-	if (cmd && ft_lstsize(cmd->args) > 1)
-		return (ft_putstr_fd("exit: too many arguments.\n", 2), 1);
+	if (cmd && cmd->args && ft_is_onlydigit((char *)cmd->args->content)
+		&& ft_lstsize(cmd->args) > 1)
+		return (ft_putstr_fd("Minishell: exit: too many arguments\n", 2), 1);
 	if (cmd->args && ft_is_onlydigit((char *)cmd->args->content) != 1)
 	{
 		if (pid > 0)
 			printf("exit\n");
-		ft_putstr_fd("exit: non numeric arguments.\n", 2);
+		ft_putstr_fd("Minishell: exit: ", 2);
+		ft_putstr_fd((char *)cmd->args->content, 2);
+		ft_putstr_fd(": numeric argument required\n", 2);
 		ft_clean_all(data);
 		exit(2);
 	}

@@ -3,10 +3,11 @@
 /*                                                        :::      ::::::::   */
 /*   fork_child.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vnaoussi <vnaoussi@learner.42.tech>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/04/22 11:46:36 by clwenhaj          #+#    #+#             */
-/*   Updated: 2026/04/24 12:24:34 by clwenhaj         ###   ########.fr       */
+/*   Created: 2026/04/24 13:09:01 by vnaoussi          #+#    #+#             */
+/*   Updated: 2026/04/24 13:11:00 by vnaoussi         ###   ########.fr       */
+/*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
