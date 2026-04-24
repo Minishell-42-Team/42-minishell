@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/23 23:49:38 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/22 17:00:21 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/24 12:17:05 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ static void	run_pipeline_loop(t_minishell_data **data, t_command_ast *cmd,
 {
 	int	p[2];
 	int	i;
-	int pid;
+	int	pid;
 
 	i = -1;
 	while (cmd)

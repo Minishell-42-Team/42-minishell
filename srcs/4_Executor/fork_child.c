@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/22 11:46:36 by clwenhaj          #+#    #+#             */
-/*   Updated: 2026/04/22 17:59:22 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/24 12:17:31 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ static void	handle_no_args(t_command_ast *command, t_minishell_data **data)
 	ft_clean_all(data);
 	exit(len);
 }
+
 void	fork_child_do(t_command_ast *command, t_minishell_data **data, int pid)
 {
 	char	**args;

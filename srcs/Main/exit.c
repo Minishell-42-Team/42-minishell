@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 02:03:34 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/23 15:15:10 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/24 12:18:05 by vnaoussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ void	ft_clean_all(t_minishell_data **data)
 
 int	ft_exit(t_command_ast *cmd, t_minishell_data **data, int pid)
 {
-
 	if (cmd && ft_lstsize(cmd->args) > 1)
 		return (ft_putstr_fd("exit: too many arguments.\n", 2), 1);
 	if (cmd->args && ft_is_onlydigit((char *)cmd->args->content) != 1)
