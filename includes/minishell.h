@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 15:44:47 by vnaoussi          #+#    #+#             */
-/*   Updated: 2026/04/22 16:39:14 by clwenhaj         ###   ########.fr       */
+/*   Updated: 2026/04/24 11:48:46 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,9 @@ typedef enum e_token_type
 	APPEND,
 	HEREDOC,
 	SEMICOLON,
-	AND,
 	AND_IF,
+	AND,
 	OR_IF,
-	NOT,
 }	t_token_type;
 
 typedef struct s_token
@@ -125,8 +124,6 @@ int				handle_heredoc(const char *delim, int quoted,
 					t_minishell_data **data);
 void			ft_wait_child(t_command_ast *cmd, pid_t *pids);
 int				prepare_heredoc(t_command_ast *cmds, t_minishell_data **data);
-void			close_all_heredocs(t_command_ast *cmds,
-					t_command_ast *current_cmd);
 void			ft_free_table(char ***table, int len);
 void			fork_child_do(t_command_ast *command, t_minishell_data **data);
 void			fork_parent_do(int *fd_in, t_command_ast *cmd,
@@ -136,16 +133,12 @@ int				is_operator(char c);
 int				is_quote(char c);
 int				ft_isspace(char c);
 void			ignore_signals(void);
-void			handle_child(t_minishell_data **d, t_command_ast *c, int *p,
-					int f);
 int				check_built_parent(t_command_ast *c, t_minishell_data **d);
-int				get_fdin(t_command_ast *cmd);
 int				get_fdout(t_command_ast *cmd);
 int				open_file(t_redir_file *redir);
 int				exec_builtin(t_command_ast *cmd, t_minishell_data **data);
 int				exec_simple_builtin_2(t_command_ast *cmd);
 int				get_matched_args(t_command_ast *cmd);
-void			ft_free_arg(t_list **head, t_list **node_to_free);
 void			handle_fork_signal(int sig);
 void			handle_signal(int sig);
 int				add_new_arg(t_list **args, char *content, int *count);

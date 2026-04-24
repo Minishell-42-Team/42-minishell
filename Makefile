@@ -50,7 +50,7 @@ fclean: clean
 
 re: fclean all
 
-debug: CFLAGS += -g3 -fsanitize=address
+debug: CFLAGS += -g3 -fsanitize=address,undefined
 debug: re
 
 gdb: CFLAGS += -g3

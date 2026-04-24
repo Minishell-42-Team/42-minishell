@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/10 10:51:57 by clwenhaj          #+#    #+#             */
-/*   Updated: 2026/04/17 15:36:05 by vnaoussi         ###   ########.fr       */
+/*   Updated: 2026/04/24 11:48:35 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,8 +69,6 @@ t_token_type	get_operator_type(t_data *data)
 	}
 	if (c == '|')
 		return (PIPE);
-	if (c == '!')
-		return (NOT);
 	if (c == ';')
 		return (SEMICOLON);
 	return (get_operator_type_redir(c, next, data));

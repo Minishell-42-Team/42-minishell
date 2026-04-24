@@ -6,7 +6,7 @@
 /*   By: clwenhaj <clwenhaj@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 15:54:24 by clwenhaj          #+#    #+#             */
-/*   Updated: 2026/04/21 15:43:29 by clwenhaj         ###   ########.fr       */
+/*   Updated: 2026/04/24 11:48:42 by clwenhaj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,8 +66,6 @@ static char	*get_token_value(t_token_type type)
 		return (ft_strdup("&&"));
 	if (type == OR_IF)
 		return (ft_strdup("||"));
-	if (type == NOT)
-		return (ft_strdup("!"));
 	return (NULL);
 }
 
